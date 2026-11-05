@@ -250,6 +250,12 @@ a {
   <p class="auth-message" id="report-message" role="status" aria-live="polite"></p>
 </section>
 
+<section class="card" id="my-reports">
+  <h2>♡ My Submitted Reports</h2>
+  <p class="section-note">Track the status of reports you have submitted. Only you and authorized staff can view report details.</p>
+  <div id="my-reports-list"><p>Sign in to view your reports.</p></div>
+</section>
+
 <section class="card" id="my-moderation">
   <h2>♡ My Moderation History</h2>
   <p class="section-note">Only you can see moderation records attached to your account. If an action appears here, you can submit an appeal.</p>
@@ -416,6 +422,45 @@ a {
     }
   });
 
+  async function loadMyReports(user) {
+    const list = document.getElementById("my-reports-list");
+    list.replaceChildren();
+    if (!user) {
+      list.textContent = "Sign in to view your reports.";
+      return;
+    }
+    list.textContent = "Loading your reports...";
+    const { data, error } = await client.from("reports")
+      .select("id, category, details, status, created_at")
+      .eq("reporter_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) {
+      list.textContent = "Report tracking isn't available yet. Apply the report-tracking database update, then refresh. (" + error.message + ")";
+      return;
+    }
+    list.replaceChildren();
+    if (!data || data.length === 0) {
+      list.textContent = "You haven't submitted any reports.";
+      return;
+    }
+    for (const report of data) {
+      const item = document.createElement("article");
+      item.className = "moderation-item";
+      const heading = document.createElement("strong");
+      heading.textContent = report.category.replaceAll("_", " ").toUpperCase();
+      const status = document.createElement("p");
+      status.textContent = "Status: " + report.status.toUpperCase();
+      const details = document.createElement("p");
+      details.textContent = report.details;
+      const date = document.createElement("p");
+      date.className = "member-meta";
+      date.textContent = "Submitted " + new Date(report.created_at).toLocaleString();
+      item.append(heading, status, details, date);
+      list.append(item);
+    }
+  }
+
   async function loadMyModeration(user) {
     myModerationList.replaceChildren();
     if (!user) {
@@ -577,11 +622,15 @@ a {
     const user = data?.session?.user || null;
     renderUser(user);
     if (user) loadOwnProfile(user);
+    loadMyModeration(user);
+    loadMyReports(user);
   });
   client.auth.onAuthStateChange((_event, session) => {
     const user = session?.user || null;
     renderUser(user);
     if (user) loadOwnProfile(user);
+    loadMyModeration(user);
+    loadMyReports(user);
   });
   loadMembers();
   setMode("signup");
