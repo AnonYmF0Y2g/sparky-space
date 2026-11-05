@@ -133,7 +133,17 @@ a {
 .member-meta { color:#8a769b; font-size:12px; }
 .section-note { color:#806b91; font-size:14px; }
 
-</style>
+
+.report-form { display:grid; gap:12px; max-width:620px; }
+.report-form label { display:grid; gap:6px; font-weight:bold; }
+.report-form input,.report-form select,.report-form textarea { width:100%; padding:11px; border:1px solid #d9c3ed; border-radius:10px; font:inherit; color:#57416f; background:#fffaff; }
+.report-form textarea { min-height:110px; resize:vertical; }
+.report-form button,.appeal-form button { justify-self:start; border:0; border-radius:12px; padding:11px 16px; background:#a16acb; color:white; font-weight:bold; cursor:pointer; }
+.report-form button:disabled,.appeal-form button:disabled { opacity:.6; cursor:wait; }
+.moderation-item { background:#fffaff; border:1px solid #ead7ff; border-radius:14px; padding:15px; margin:12px 0; overflow-wrap:anywhere; }
+.appeal-form { display:grid; gap:8px; margin-top:12px; }
+.appeal-form textarea { width:100%; min-height:75px; padding:10px; border:1px solid #d9c3ed; border-radius:10px; font:inherit; }
+\n</style>
 </head>
 
 <body>
@@ -214,7 +224,38 @@ a {
 </section>
 
 
-<section class="card" id="about">
+
+<section class="card" id="report">
+  <h2>♡ Report a Concern</h2>
+  <p class="section-note">Signed-in members can report a public username or raise a general community concern. Please don't include private information, passwords, addresses, or contact details.</p>
+  <form class="report-form" id="report-form">
+    <label>Member username (optional)
+      <input id="report-username" maxlength="20" placeholder="Username to report">
+    </label>
+    <label>Category
+      <select id="report-category" required>
+        <option value="harassment">Harassment or bullying</option>
+        <option value="inappropriate_content">Inappropriate content</option>
+        <option value="spam">Spam</option>
+        <option value="impersonation">Impersonation</option>
+        <option value="safety_concern">Safety concern</option>
+        <option value="other">Other</option>
+      </select>
+    </label>
+    <label>What happened?
+      <textarea id="report-details" minlength="10" maxlength="2000" required placeholder="Describe the concern without sharing private information."></textarea>
+    </label>
+    <button id="report-submit" type="submit">Submit report</button>
+  </form>
+  <p class="auth-message" id="report-message" role="status" aria-live="polite"></p>
+</section>
+
+<section class="card" id="my-moderation">
+  <h2>♡ My Moderation History</h2>
+  <p class="section-note">Only you can see moderation records attached to your account. If an action appears here, you can submit an appeal.</p>
+  <div id="my-moderation-list"><p>Sign in to view your account notices.</p></div>
+</section>
+\n<section class="card" id="about">
   <h2>♡ About Me</h2>
   <p>
     Hewwo! I'm Sparky. This is my personal
@@ -332,7 +373,121 @@ a {
     if (!error) loadMembers();
   });
 
-  const form = document.getElementById("auth-form");
+
+  const reportForm = document.getElementById("report-form");
+  const reportMessage = document.getElementById("report-message");
+  const myModerationList = document.getElementById("my-moderation-list");
+
+  reportForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!activeUser) {
+      reportMessage.textContent = "Please sign in before submitting a report.";
+      return;
+    }
+    const submit = document.getElementById("report-submit");
+    const username = document.getElementById("report-username").value.trim();
+    const category = document.getElementById("report-category").value;
+    const details = document.getElementById("report-details").value.trim();
+    submit.disabled = true;
+    reportMessage.textContent = "Submitting report...";
+    try {
+      let reportedUserId = null;
+      if (username) {
+        const { data: target, error: lookupError } = await client.from("profiles")
+          .select("id, username").eq("username", username).maybeSingle();
+        if (lookupError) throw lookupError;
+        if (!target) throw new Error("That username wasn't found. Check the spelling or leave it blank for a general report.");
+        if (target.id === activeUser.id) throw new Error("You can't report your own account.");
+        reportedUserId = target.id;
+      }
+      const { error } = await client.from("reports").insert({
+        reporter_id: activeUser.id,
+        reported_user_id: reportedUserId,
+        category,
+        details
+      });
+      if (error) throw error;
+      reportForm.reset();
+      reportMessage.textContent = "Report submitted. Thank you for helping keep the community safer.";
+    } catch (error) {
+      reportMessage.textContent = "Couldn't submit report: " + (error.message || "Please try again.");
+    } finally {
+      submit.disabled = false;
+    }
+  });
+
+  async function loadMyModeration(user) {
+    myModerationList.replaceChildren();
+    if (!user) {
+      myModerationList.textContent = "Sign in to view your account notices.";
+      return;
+    }
+    myModerationList.textContent = "Loading your moderation history...";
+    const { data, error } = await client.from("moderation_actions")
+      .select("id, action_type, reason, created_at, expires_at")
+      .eq("target_user_id", user.id).order("created_at", { ascending: false }).limit(50);
+    if (error) {
+      myModerationList.textContent = "Couldn't load moderation history: " + error.message;
+      return;
+    }
+    myModerationList.replaceChildren();
+    if (!data || data.length === 0) {
+      myModerationList.textContent = "No moderation actions are recorded for your account.";
+      return;
+    }
+    for (const action of data) {
+      const item = document.createElement("article");
+      item.className = "moderation-item";
+      const heading = document.createElement("strong");
+      heading.textContent = action.action_type.replaceAll("_", " ").toUpperCase();
+      const reason = document.createElement("p");
+      reason.textContent = action.reason;
+      const date = document.createElement("p");
+      date.className = "member-meta";
+      date.textContent = "Recorded " + new Date(action.created_at).toLocaleString() +
+        (action.expires_at ? " · Expires " + new Date(action.expires_at).toLocaleString() : "");
+      item.append(heading, reason, date);
+      if (action.action_type !== "note" && action.action_type !== "lift_ban") {
+        const appeal = document.createElement("form");
+        appeal.className = "appeal-form";
+        const label = document.createElement("label");
+        label.textContent = "Appeal this action";
+        const messageBox = document.createElement("textarea");
+        messageBox.minLength = 10;
+        messageBox.maxLength = 2000;
+        messageBox.required = true;
+        messageBox.placeholder = "Explain why you think this action should be reviewed.";
+        const button = document.createElement("button");
+        button.type = "submit";
+        button.textContent = "Submit appeal";
+        const status = document.createElement("p");
+        status.className = "section-note";
+        status.setAttribute("role", "status");
+        appeal.append(label, messageBox, button, status);
+        appeal.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          button.disabled = true;
+          status.textContent = "Submitting appeal...";
+          const { error: appealError } = await client.from("appeals").insert({
+            action_id: action.id,
+            appellant_id: user.id,
+            message: messageBox.value.trim()
+          });
+          button.disabled = false;
+          status.textContent = appealError
+            ? (appealError.code === "23505" ? "An appeal has already been submitted for this action." : "Couldn't submit appeal: " + appealError.message)
+            : "Appeal submitted for staff review.";
+          if (!appealError) {
+            messageBox.disabled = true;
+            button.disabled = true;
+          }
+        });
+        item.append(appeal);
+      }
+      myModerationList.append(item);
+    }
+  }
+\n  const form = document.getElementById("auth-form");
   const usernameInput = document.getElementById("auth-username");
   const usernameLabel = document.getElementById("username-label");
   const emailInput = document.getElementById("auth-email");
