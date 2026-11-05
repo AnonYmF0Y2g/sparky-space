@@ -108,6 +108,20 @@ a {
 ::selection {
   background: #e9bfff;
 }
+
+/* Community account */
+.account-card { background:#fff; padding:25px; border-radius:22px; margin-bottom:22px; border:2px solid #ead7ff; box-shadow:0 5px 18px #a982c522; }
+.account-card h2 { margin-top:0; }
+.auth-tabs,.account-actions { display:flex; gap:10px; flex-wrap:wrap; margin:14px 0; }
+.auth-tabs button,.auth-form button,.account-actions button { border:0; border-radius:12px; padding:11px 16px; background:#a16acb; color:white; font-weight:bold; cursor:pointer; }
+.auth-tabs button.secondary,.account-actions button.secondary { background:#ead6ff; color:#704b94; }
+.auth-form { display:grid; gap:12px; max-width:460px; }
+.auth-form label { display:grid; gap:6px; font-weight:bold; }
+.auth-form input { width:100%; padding:12px; border:1px solid #d9c3ed; border-radius:10px; font:inherit; color:#57416f; background:#fffaff; }
+.auth-form button:disabled { opacity:.6; cursor:wait; }
+.auth-message { min-height:24px; overflow-wrap:anywhere; }
+.account-email { overflow-wrap:anywhere; color:#765c8d; }
+
 </style>
 </head>
 
@@ -124,6 +138,7 @@ a {
   <a href="#about">About</a>
   <a href="#interests">Interests</a>
   <a href="#projects">Projects</a>
+  <a href="#account">Account</a>
 </nav>
 
 <main>
@@ -137,6 +152,39 @@ a {
   <span class="tag">Creative</span>
   <p>Hewwo! Welcome to my space! ^w^</p>
 </section>
+
+
+<section class="account-card" id="account">
+  <h2>♡ Community Account</h2>
+  <p>Create an account or sign in to Sparky's Space. Your email address is private and is not displayed on your public profile.</p>
+  <div id="signed-out">
+    <div class="auth-tabs">
+      <button type="button" id="show-signup">Create account</button>
+      <button type="button" class="secondary" id="show-login">Sign in</button>
+    </div>
+    <form class="auth-form" id="auth-form">
+      <label id="username-label">Username
+        <input id="auth-username" type="text" minlength="3" maxlength="20" autocomplete="username" placeholder="3–20 letters, numbers, _ or -" required>
+      </label>
+      <label>Email address
+        <input id="auth-email" type="email" autocomplete="email" placeholder="you@example.com" required>
+      </label>
+      <label>Password
+        <input id="auth-password" type="password" minlength="8" autocomplete="new-password" placeholder="At least 8 characters" required>
+      </label>
+      <button id="auth-submit" type="submit">Create account</button>
+    </form>
+  </div>
+  <div id="signed-in" hidden>
+    <p class="status">● You're signed in</p>
+    <p>Welcome, <strong id="account-username"></strong>!</p>
+    <p class="account-email" id="account-email"></p>
+    <div class="account-actions"><button type="button" class="secondary" id="signout-button">Sign out</button></div>
+  </div>
+  <p class="auth-message" id="auth-message" role="status" aria-live="polite"></p>
+  <p><small>Privacy tip: don't use your real name, school, address, phone number, or other private details as your username.</small></p>
+</section>
+
 
 <section class="card" id="about">
   <h2>♡ About Me</h2>
@@ -173,6 +221,108 @@ a {
   Made with ♡ by Sparky
   <p>Thanks for visiting! ^w^</p>
 </footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  const SUPABASE_URL = "https://wuwvazwrqmdqiztyxfrs.supabase.co";
+  // Browser-safe publishable key. Never place a secret/service-role key in a public website.
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_KfdFoBj7R-Zf5vQv6L4NYA_rKhju2oj";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+  const form = document.getElementById("auth-form");
+  const usernameInput = document.getElementById("auth-username");
+  const usernameLabel = document.getElementById("username-label");
+  const emailInput = document.getElementById("auth-email");
+  const passwordInput = document.getElementById("auth-password");
+  const submitButton = document.getElementById("auth-submit");
+  const message = document.getElementById("auth-message");
+  const signedOut = document.getElementById("signed-out");
+  const signedIn = document.getElementById("signed-in");
+  let mode = "signup";
+
+  function say(text) { message.textContent = text; }
+  function setMode(nextMode) {
+    mode = nextMode;
+    const creating = mode === "signup";
+    usernameLabel.hidden = !creating;
+    usernameInput.required = creating;
+    usernameInput.disabled = !creating;
+    submitButton.textContent = creating ? "Create account" : "Sign in";
+    document.getElementById("show-signup").classList.toggle("secondary", !creating);
+    document.getElementById("show-login").classList.toggle("secondary", creating);
+    passwordInput.autocomplete = creating ? "new-password" : "current-password";
+    say("");
+  }
+  function renderUser(user) {
+    signedOut.hidden = Boolean(user);
+    signedIn.hidden = !user;
+    if (user) {
+      document.getElementById("account-username").textContent = user.user_metadata?.username || "Member";
+      document.getElementById("account-email").textContent = "Signed in as " + (user.email || "your account");
+    } else {
+      form.reset();
+      setMode("signup");
+    }
+  }
+
+  document.getElementById("show-signup").addEventListener("click", () => setMode("signup"));
+  document.getElementById("show-login").addEventListener("click", () => setMode("login"));
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    submitButton.disabled = true;
+    say(mode === "signup" ? "Creating your account..." : "Signing you in...");
+    try {
+      let result;
+      if (mode === "signup") {
+        const username = usernameInput.value.trim();
+        if (!/^[a-zA-Z0-9_-]{3,20}$/.test(username)) {
+          throw new Error("Username must be 3–20 characters and use only letters, numbers, _ or -.");
+        }
+        result = await client.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { username },
+            emailRedirectTo: "https://anonymf0y2g.github.io/sparky-space/"
+          }
+        });
+        if (result.error) throw result.error;
+        if (result.data.session) {
+          say("Account created! You're signed in.");
+        } else {
+          say("Account created. Check your email for the confirmation link, then come back here to sign in.");
+          setMode("login");
+        }
+      } else {
+        result = await client.auth.signInWithPassword({ email, password });
+        if (result.error) throw result.error;
+        say("Signed in successfully!");
+      }
+    } catch (error) {
+      say(error.message || "Something went wrong. Please try again.");
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+
+  document.getElementById("signout-button").addEventListener("click", async () => {
+    const { error } = await client.auth.signOut();
+    say(error ? error.message : "You have been signed out.");
+  });
+
+  client.auth.getSession().then(({ data, error }) => {
+    if (error) say(error.message);
+    renderUser(data?.session?.user || null);
+  });
+  client.auth.onAuthStateChange((_event, session) => renderUser(session?.user || null));
+  setMode("signup");
+})();
+</script>
 
 </body>
 </html>
