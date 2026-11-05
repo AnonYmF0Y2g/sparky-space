@@ -121,6 +121,17 @@ a {
 .auth-form button:disabled { opacity:.6; cursor:wait; }
 .auth-message { min-height:24px; overflow-wrap:anywhere; }
 .account-email { overflow-wrap:anywhere; color:#765c8d; }
+.profile-editor { display:grid; gap:10px; max-width:560px; margin-top:18px; }
+.profile-editor label { display:grid; gap:5px; font-weight:bold; }
+.profile-editor input,.profile-editor textarea { width:100%; padding:11px; border:1px solid #d9c3ed; border-radius:10px; font:inherit; color:#57416f; background:#fffaff; }
+.profile-editor textarea { min-height:90px; resize:vertical; }
+.profile-editor button { justify-self:start; border:0; border-radius:12px; padding:11px 16px; background:#a16acb; color:white; font-weight:bold; cursor:pointer; }
+.member-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; }
+.member-card { background:#fffaff; border:1px solid #ead7ff; border-radius:15px; padding:15px; overflow-wrap:anywhere; }
+.member-card strong { color:#8a55b4; font-size:18px; }
+.member-card p { margin:7px 0; }
+.member-meta { color:#8a769b; font-size:12px; }
+.section-note { color:#806b91; font-size:14px; }
 
 </style>
 </head>
@@ -139,6 +150,7 @@ a {
   <a href="#interests">Interests</a>
   <a href="#projects">Projects</a>
   <a href="#account">Account</a>
+  <a href="#members">Members</a>
 </nav>
 
 <main>
@@ -178,11 +190,27 @@ a {
   <div id="signed-in" hidden>
     <p class="status">● You're signed in</p>
     <p>Welcome, <strong id="account-username"></strong>!</p>
-    <p class="account-email" id="account-email"></p>
+    <p class="account-email" id="account-email">Your email address is private.</p>
     <div class="account-actions"><button type="button" class="secondary" id="signout-button">Sign out</button></div>
+    <hr style="border:0;border-top:1px solid #ead7ff;width:100%;margin:20px 0 8px">
+    <h3>♡ Edit your member profile</h3>
+    <form class="profile-editor" id="profile-form">
+      <label>Display name <input id="profile-display-name" maxlength="30" placeholder="How should members see you?"></label>
+      <label>Status <input id="profile-status" maxlength="60" placeholder="A short status message"></label>
+      <label>Bio <textarea id="profile-bio" maxlength="240" placeholder="A little about you (no private details)"></textarea></label>
+      <button type="submit" id="profile-save">Save profile</button>
+    </form>
+    <p class="auth-message" id="profile-message" role="status" aria-live="polite"></p>
   </div>
   <p class="auth-message" id="auth-message" role="status" aria-live="polite"></p>
   <p><small>Privacy tip: don't use your real name, school, address, phone number, or other private details as your username.</small></p>
+</section>
+
+<section class="card" id="members">
+  <h2>♡ Community Members</h2>
+  <p class="section-note">Public member profiles. Email addresses and login details are never shown here.</p>
+  <div class="member-grid" id="member-directory"><p>Loading members...</p></div>
+  <p class="section-note" id="members-message" role="status" aria-live="polite"></p>
 </section>
 
 
@@ -230,6 +258,79 @@ a {
   // Browser-safe publishable key. Never place a secret/service-role key in a public website.
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_KfdFoBj7R-Zf5vQv6L4NYA_rKhju2oj";
   const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const profileForm = document.getElementById("profile-form");
+  const profileMessage = document.getElementById("profile-message");
+  const memberDirectory = document.getElementById("member-directory");
+  let activeUser = null;
+
+  async function loadOwnProfile(user) {
+    if (!user) return;
+    const { data, error } = await client.from("profiles")
+      .select("username, display_name, bio, status")
+      .eq("id", user.id).maybeSingle();
+    if (error) {
+      profileMessage.textContent = "Couldn't load your profile: " + error.message;
+      return;
+    }
+    if (data) {
+      document.getElementById("profile-display-name").value = data.display_name || "";
+      document.getElementById("profile-status").value = data.status || "";
+      document.getElementById("profile-bio").value = data.bio || "";
+    } else {
+      profileMessage.textContent = "Your profile is still being prepared. Please refresh in a moment.";
+    }
+  }
+
+  async function loadMembers() {
+    memberDirectory.innerHTML = "<p>Loading members...</p>";
+    const { data, error } = await client.from("profiles")
+      .select("username, display_name, bio, status, created_at")
+      .order("created_at", { ascending: true }).limit(100);
+    if (error) {
+      memberDirectory.textContent = "Member directory is unavailable: " + error.message;
+      return;
+    }
+    if (!data || data.length === 0) {
+      memberDirectory.textContent = "No member profiles yet. Be the first!";
+      return;
+    }
+    memberDirectory.replaceChildren();
+    for (const member of data) {
+      const card = document.createElement("article");
+      card.className = "member-card";
+      const name = document.createElement("strong");
+      name.textContent = member.display_name || member.username || "Member";
+      const username = document.createElement("p");
+      username.textContent = "@" + (member.username || "member");
+      const status = document.createElement("p");
+      status.textContent = member.status || "No status set";
+      const bio = document.createElement("p");
+      bio.textContent = member.bio || "This member hasn't added a bio yet.";
+      const joined = document.createElement("p");
+      joined.className = "member-meta";
+      joined.textContent = member.created_at ? "Joined " + new Date(member.created_at).toLocaleDateString() : "";
+      card.append(name, username, status, bio, joined);
+      memberDirectory.append(card);
+    }
+    document.getElementById("members-message").textContent = data.length === 100 ? "Showing the first 100 members." : data.length + " member profile(s).";
+  }
+
+  profileForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (!activeUser) return;
+    const save = document.getElementById("profile-save");
+    save.disabled = true;
+    profileMessage.textContent = "Saving profile...";
+    const values = {
+      display_name: document.getElementById("profile-display-name").value.trim(),
+      status: document.getElementById("profile-status").value.trim(),
+      bio: document.getElementById("profile-bio").value.trim()
+    };
+    const { error } = await client.from("profiles").update(values).eq("id", activeUser.id);
+    save.disabled = false;
+    profileMessage.textContent = error ? "Couldn't save: " + error.message : "Profile saved! ^w^";
+    if (!error) loadMembers();
+  });
 
   const form = document.getElementById("auth-form");
   const usernameInput = document.getElementById("auth-username");
@@ -256,11 +357,12 @@ a {
     say("");
   }
   function renderUser(user) {
+    activeUser = user || null;
     signedOut.hidden = Boolean(user);
     signedIn.hidden = !user;
     if (user) {
       document.getElementById("account-username").textContent = user.user_metadata?.username || "Member";
-      document.getElementById("account-email").textContent = "Signed in as " + (user.email || "your account");
+      document.getElementById("account-email").textContent = "Your email address is private and is not shown in the member directory.";
     } else {
       form.reset();
       setMode("signup");
@@ -317,9 +419,16 @@ a {
 
   client.auth.getSession().then(({ data, error }) => {
     if (error) say(error.message);
-    renderUser(data?.session?.user || null);
+    const user = data?.session?.user || null;
+    renderUser(user);
+    if (user) loadOwnProfile(user);
   });
-  client.auth.onAuthStateChange((_event, session) => renderUser(session?.user || null));
+  client.auth.onAuthStateChange((_event, session) => {
+    const user = session?.user || null;
+    renderUser(user);
+    if (user) loadOwnProfile(user);
+  });
+  loadMembers();
   setMode("signup");
 })();
 </script>
