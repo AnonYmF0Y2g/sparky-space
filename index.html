@@ -1,179 +1,226 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sparky's Space ♡</title>
-
 <style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: sans-serif;
-  background: #f5eaff;
-  color: #57416f;
-}
-
-header {
-  text-align: center;
-  padding: 55px 20px;
-  background: linear-gradient(135deg, #d9baff, #ffcbea);
-  border-bottom: 4px solid white;
-}
-
-header h1 {
-  font-size: 45px;
-  margin: 0;
-}
-
-header p {
-  font-size: 16px;
-}
-
-nav {
-  text-align: center;
-  padding: 17px;
-  background: #ead6ff;
-  position: sticky;
-  top: 0;
-}
-
-nav a {
-  color: #704b94;
-  text-decoration: none;
-  font-weight: bold;
-  margin: 0 12px;
-}
-
-nav a:hover {
-  color: #d66cae;
-}
-
-main {
-  max-width: 850px;
-  margin: 30px auto;
-  padding: 0 18px;
-}
-
-.card {
-  background: white;
-  padding: 25px;
-  border-radius: 22px;
-  margin-bottom: 22px;
-  border: 2px solid #ead7ff;
-  box-shadow: 0 5px 18px #a982c522;
-}
-
-h2 {
-  color: #a16acb;
-}
-
-.profile {
-  text-align: center;
-}
-
-.profile-name {
-  font-size: 27px;
-  font-weight: bold;
-}
-
-.tag {
-  display: inline-block;
-  background: #f0ddff;
-  padding: 7px 13px;
-  border-radius: 20px;
-  margin: 4px;
-  font-size: 13px;
-}
-
-.status {
-  color: #479c78;
-  font-weight: bold;
-}
-
-footer {
-  text-align: center;
-  padding: 30px;
-  background: #e5d0fa;
-}
-
-a {
-  scroll-behavior: smooth;
-}
-
-::selection {
-  background: #e9bfff;
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,sans-serif;background:#f5eaff;color:#57416f}
+header{text-align:center;padding:48px 20px;background:linear-gradient(135deg,#d9baff,#ffcbea);border-bottom:4px solid white}
+header h1{font-size:clamp(32px,6vw,45px);margin:0}
+nav{text-align:center;padding:17px;background:#ead6ff;position:sticky;top:0;z-index:5}
+nav a{color:#704b94;text-decoration:none;font-weight:bold;margin:0 10px}
+nav a:hover{color:#d66cae}
+main{max-width:850px;margin:30px auto;padding:0 18px}
+.card{background:white;padding:25px;border-radius:22px;margin-bottom:22px;border:2px solid #ead7ff;box-shadow:0 5px 18px #a982c522}
+h2{color:#a16acb;margin-top:0}
+.profile{text-align:center}
+.profile-name{font-size:27px;font-weight:bold}
+.tag{display:inline-block;background:#f0ddff;padding:7px 13px;border-radius:20px;margin:4px;font-size:13px}
+.status{color:#479c78;font-weight:bold}
+.auth-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+label{display:block;font-weight:650;margin:12px 0 5px}
+input,textarea{width:100%;padding:11px 12px;border:1px solid #d9c4ed;border-radius:10px;font:inherit;color:#57416f;background:#fff}
+textarea{min-height:80px;resize:vertical}
+button{border:0;border-radius:12px;padding:11px 16px;margin:10px 6px 0 0;background:#a875cf;color:white;font-weight:700;cursor:pointer}
+button.secondary{background:#eadcf7;color:#68458a}
+button:disabled{opacity:.6;cursor:wait}
+.note{font-size:13px;color:#806d91;line-height:1.5}
+#auth-message{min-height:24px;font-weight:600;color:#76509a}
+#account-panel[hidden],#auth-forms[hidden]{display:none}
+.member{padding:12px;border-radius:12px;background:#faf5ff;margin:8px 0}
+footer{text-align:center;padding:30px;background:#e5d0fa}
+::selection{background:#e9bfff}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-config.js"></script>
 </head>
-
 <body>
-
 <header>
-  <h1>♡ Sparky's Space ♡</h1>
-  <p>A little corner of the internet :3</p>
-  <p>✦ Welcome to my world ✦</p>
+<h1>♡ Sparky's Space ♡</h1>
+<p>A little corner of the internet :3</p>
+<p>✦ Welcome to my world ✦</p>
 </header>
-
 <nav>
-  <a href="#home">Home</a>
-  <a href="#about">About</a>
-  <a href="#interests">Interests</a>
-  <a href="#projects">Projects</a>
+<a href="#home">Home</a><a href="#about">About</a><a href="#interests">Interests</a><a href="#projects">Projects</a><a href="#accounts">Accounts</a><a href="#members">Members</a>
 </nav>
-
 <main>
-
 <section class="card profile" id="home">
-  <div class="profile-name">♡ Sparky ♡</div>
-  <p>Protogen · Furry · Dreamer</p>
-  <p class="status">● Online</p>
-  <span class="tag">Furry</span>
-  <span class="tag">Technology</span>
-  <span class="tag">Creative</span>
-  <p>Hewwo! Welcome to my space! ^w^</p>
+<div class="profile-name">♡ Sparky ♡</div>
+<p>Protogen · Furry · Dreamer</p>
+<p class="status">● Welcome!</p>
+<span class="tag">Furry</span><span class="tag">Technology</span><span class="tag">Creative</span>
+<p>Hewwo! Welcome to my space! ^w^</p>
 </section>
-
 <section class="card" id="about">
-  <h2>♡ About Me</h2>
-  <p>
-    Hewwo! I'm Sparky. This is my personal
-    corner of the internet where I can share
-    my interests, projects and little discoveries.
-  </p>
-  <p>Make yourself comfortable! :3</p>
+<h2>♡ About Me</h2>
+<p>Hewwo! I'm Sparky. This is my personal corner of the internet where I can share my interests, projects and little discoveries.</p>
+<p>Make yourself comfortable! :3</p>
 </section>
-
 <section class="card" id="interests">
-  <h2>♡ My Interests</h2>
-  <ul>
-    <li>Protogens and furry culture</li>
-    <li>Computers and technology</li>
-    <li>Music and electronic sounds</li>
-    <li>Creative projects</li>
-    <li>Internet exploration</li>
-  </ul>
+<h2>♡ My Interests</h2>
+<ul><li>Protogens and furry culture</li><li>Computers and technology</li><li>Music and electronic sounds</li><li>Creative projects</li><li>Internet exploration</li></ul>
 </section>
-
 <section class="card" id="projects">
-  <h2>♡ My Projects</h2>
-  <p>Things I'm working on and creating.</p>
-  <span class="tag">Personal Website</span>
-  <span class="tag">Creative Projects</span>
-  <span class="tag">More coming soon!</span>
+<h2>♡ My Projects</h2>
+<p>Things I'm working on and creating.</p>
+<span class="tag">Personal Website</span><span class="tag">Creative Projects</span><span class="tag">More coming soon!</span>
 </section>
-
+<section class="card" id="accounts">
+<h2>♡ Community Account</h2>
+<p class="note">Create an account or sign in. Use an email address you can access. Never share your password with anyone.</p>
+<div id="auth-forms" class="auth-grid">
+<form id="signup-form">
+<h3>Create account</h3>
+<label for="signup-name">Display name</label><input id="signup-name" maxlength="24" minlength="3" autocomplete="nickname" required>
+<label for="signup-email">Email</label><input id="signup-email" type="email" autocomplete="email" required>
+<label for="signup-password">Password</label><input id="signup-password" type="password" minlength="8" autocomplete="new-password" required>
+<button type="submit">Create account</button>
+</form>
+<form id="login-form">
+<h3>Welcome back</h3>
+<label for="login-email">Email</label><input id="login-email" type="email" autocomplete="email" required>
+<label for="login-password">Password</label><input id="login-password" type="password" autocomplete="current-password" required>
+<button type="submit">Log in</button>
+<button class="secondary" id="reset-password" type="button">Forgot password?</button>
+</form>
+</div>
+<div id="account-panel" hidden>
+<p>Signed in as <strong id="account-email"></strong></p>
+<p>Display name: <strong id="account-name"></strong></p>
+<form id="profile-form">
+<label for="profile-bio">Your short bio (max 240 characters)</label>
+<textarea id="profile-bio" maxlength="240" placeholder="A little about you..."></textarea>
+<button type="submit">Save profile</button>
+</form>
+<button class="secondary" id="logout-button" type="button">Log out</button>
+</div>
+<p id="auth-message" role="status" aria-live="polite"></p>
+</section>
+<section class="card" id="members">
+<h2>♡ Community Members</h2>
+<p class="note">Public display names and bios only. Email addresses are never shown here.</p>
+<div id="member-list">Loading members...</div>
+</section>
 </main>
+<footer>Made with ♡ by Sparky<p>Thanks for visiting! ^w^</p></footer>
+<script>
+(() => {
+  const message = document.getElementById('auth-message');
+  const forms = document.getElementById('auth-forms');
+  const panel = document.getElementById('account-panel');
+  const say = (text) => { message.textContent = text; };
+  if (!window.supabase || !window.SPARKY_SUPABASE_URL || !window.SPARKY_SUPABASE_PUBLISHABLE_KEY) {
+    say('Account service is not configured yet. Please try again later.');
+    return;
+  }
+  const client = window.supabase.createClient(
+    window.SPARKY_SUPABASE_URL,
+    window.SPARKY_SUPABASE_PUBLISHABLE_KEY
+  );
 
-<footer>
-  Made with ♡ by Sparky
-  <p>Thanks for visiting! ^w^</p>
-</footer>
+  async function refreshAccount(session) {
+    const user = session && session.user;
+    forms.hidden = !!user;
+    panel.hidden = !user;
+    if (!user) return;
+    document.getElementById('account-email').textContent = user.email || 'Email unavailable';
+    const { data, error } = await client.from('profiles')
+      .select('username,bio').eq('id', user.id).maybeSingle();
+    if (error) { say('Signed in. Profile details could not be loaded yet.'); return; }
+    document.getElementById('account-name').textContent = data?.username || 'Member';
+    document.getElementById('profile-bio').value = data?.bio || '';
+  }
 
+  document.getElementById('signup-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const button = event.submitter;
+    button.disabled = true;
+    say('Creating your account...');
+    const username = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    if (!/^[A-Za-z0-9_-]{3,24}$/.test(username)) {
+      say('Display names must be 3–24 characters: letters, numbers, _ or -.');
+      button.disabled = false; return;
+    }
+    const { data, error } = await client.auth.signUp({
+      email, password, options: { data: { username } }
+    });
+    button.disabled = false;
+    if (error) { say(error.message); return; }
+    if (data.session) {
+      say('Account created! Welcome to Sparky’s Space.');
+      await refreshAccount(data.session);
+    } else {
+      say('Almost there! Check your email for the confirmation link, then come back and log in.');
+    }
+  });
+
+  document.getElementById('login-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const button = event.submitter;
+    button.disabled = true; say('Signing in...');
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const { data, error } = await client.auth.signInWithPassword({ email, password });
+    button.disabled = false;
+    if (error) { say(error.message); return; }
+    say('You are signed in! ^w^');
+    await refreshAccount(data.session);
+  });
+
+  document.getElementById('reset-password').addEventListener('click', async () => {
+    const email = document.getElementById('login-email').value.trim();
+    if (!email) { say('Enter your email in the login box first.'); return; }
+    const { error } = await client.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + window.location.pathname
+    });
+    say(error ? error.message : 'If that account exists, a password reset email has been sent.');
+  });
+
+  document.getElementById('profile-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const { data: { user } } = await client.auth.getUser();
+    if (!user) { say('Please sign in again.'); return; }
+    const bio = document.getElementById('profile-bio').value.trim();
+    const { error } = await client.from('profiles').update({ bio }).eq('id', user.id);
+    say(error ? error.message : 'Profile saved!');
+    if (!error) loadMembers();
+  });
+
+  document.getElementById('logout-button').addEventListener('click', async () => {
+    const { error } = await client.auth.signOut();
+    say(error ? error.message : 'You have been logged out.');
+    await refreshAccount(null);
+  });
+
+  async function loadMembers() {
+    const target = document.getElementById('member-list');
+    const { data, error } = await client.from('profiles')
+      .select('username,bio,created_at').order('created_at', { ascending: false }).limit(30);
+    if (error) { target.textContent = 'Member directory will appear after the database setup is complete.'; return; }
+    target.replaceChildren();
+    if (!data || !data.length) { target.textContent = 'No members yet. Be the first!'; return; }
+    data.forEach((member) => {
+      const item = document.createElement('div');
+      item.className = 'member';
+      const name = document.createElement('strong');
+      name.textContent = member.username;
+      const bio = document.createElement('p');
+      bio.textContent = member.bio || 'No bio yet.';
+      item.append(name, bio);
+      target.append(item);
+    });
+  }
+
+  client.auth.onAuthStateChange((_event, session) => {
+    refreshAccount(session);
+  });
+  client.auth.getSession().then(({ data }) => refreshAccount(data.session));
+  loadMembers();
+})();
+</script>
 </body>
 </html>
-
