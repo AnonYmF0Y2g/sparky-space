@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d18">
+<title>Community · Sparky's Space ♡</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="site-header">
+  <h1>♡ Sparky's Space ♡</h1>
+  <p>A little corner of the internet :3</p>
+  <details class="appearance-menu">
+    <summary aria-label="Open appearance settings">Appearance ⚙</summary>
+    <div class="appearance-panel">
+      <label for="theme-choice">Dark theme
+        <select id="theme-choice">
+          <option value="lavender">Lavender Night</option><option value="rose">Rose Quartz</option>
+          <option value="midnight">Midnight</option><option value="emerald">Emerald</option>
+          <option value="amber">Amber</option><option value="slate">Slate</option>
+        </select>
+      </label>
+      <label for="accent-choice">Accent color
+        <select id="accent-choice">
+          <option value="pink">Pink</option><option value="purple">Purple</option>
+          <option value="blue">Blue</option><option value="cyan">Cyan</option>
+          <option value="teal">Teal</option><option value="green">Green</option>
+          <option value="orange">Orange</option><option value="red">Red</option>
+        </select>
+      </label>
+      <p>Your choices are saved in this browser. Dark themes only.</p>
+    </div>
+  </details>
+</header>
+<nav aria-label="Main navigation">
+  <a href="index.html">Home</a>
+  <a href="community.html" aria-current="page">Community</a>
+  <a href="account.html">Account</a>
+  <a href="safety.html">Safety &amp; Reports</a>
+</nav>
+<main>
+
+<section class="card">
+  <h2>♡ Community Members</h2>
+  <p class="section-note">Public member profiles. Email addresses and login details are never shown here.</p>
+  <div class="member-grid" id="member-directory"><p>Loading members...</p></div>
+  <p class="section-note" id="members-message" role="status" aria-live="polite"></p>
+</section>
+<section class="card">
+  <h2>♡ Community guidelines</h2>
+  <p>Be respectful, protect personal information, and keep public profiles friendly. Never post passwords, addresses, phone numbers, school details, or other private information.</p>
+  <p>Use the Safety &amp; Reports page if something needs staff attention.</p>
+  <a href="safety.html">Go to Safety &amp; Reports →</a>
+</section>
+</main>
+<footer>Made with ♡ by Sparky<p>Thanks for visiting! ^w^</p></footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+<script defer src="assets/config.js"></script>
+<script defer src="assets/app.js"></script>
+<script defer src="assets/theme.js"></script>
+</body>
+</html>
