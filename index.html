@@ -141,6 +141,10 @@ a {
 .report-form button,.appeal-form button { justify-self:start; border:0; border-radius:12px; padding:11px 16px; background:#a16acb; color:white; font-weight:bold; cursor:pointer; }
 .report-form button:disabled,.appeal-form button:disabled { opacity:.6; cursor:wait; }
 .moderation-item { background:#fffaff; border:1px solid #ead7ff; border-radius:14px; padding:15px; margin:12px 0; overflow-wrap:anywhere; }
+.report-status { display:inline-block; padding:6px 10px; border-radius:999px; background:#f0ddff; color:#704b94; font-size:12px; font-weight:bold; text-transform:capitalize; }
+.report-timeline { margin:12px 0; padding-left:22px; }
+.report-timeline li { margin:7px 0; }
+.report-outcome { background:#f7efff; border-left:3px solid #a16acb; padding:10px 12px; border-radius:8px; white-space:pre-wrap; }
 .appeal-form { display:grid; gap:8px; margin-top:12px; }
 .appeal-form textarea { width:100%; min-height:75px; padding:10px; border:1px solid #d9c3ed; border-radius:10px; font:inherit; }
 
@@ -417,6 +421,7 @@ a {
       if (error) throw error;
       reportForm.reset();
       reportMessage.textContent = "Report submitted. Thank you for helping keep the community safer.";
+      await loadMyReports(activeUser);
     } catch (error) {
       reportMessage.textContent = "Couldn't submit report: " + (error.message || "Please try again.");
     } finally {
@@ -432,11 +437,7 @@ a {
       return;
     }
     list.textContent = "Loading your reports...";
-    const { data, error } = await client.from("reports")
-      .select("id, category, details, status, created_at")
-      .eq("reporter_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(50);
+    const { data, error } = await client.rpc("get_my_reports");
     if (error) {
       list.textContent = "Report tracking isn't available yet. Apply the report-tracking database update, then refresh. (" + error.message + ")";
       return;
@@ -451,14 +452,34 @@ a {
       item.className = "moderation-item";
       const heading = document.createElement("strong");
       heading.textContent = report.category.replaceAll("_", " ").toUpperCase();
-      const status = document.createElement("p");
-      status.textContent = "Status: " + report.status.toUpperCase();
+      const status = document.createElement("span");
+      status.className = "report-status";
+      status.textContent = report.status.replaceAll("_", " ");
       const details = document.createElement("p");
       details.textContent = report.details;
-      const date = document.createElement("p");
-      date.className = "member-meta";
-      date.textContent = "Submitted " + new Date(report.created_at).toLocaleString();
-      item.append(heading, status, details, date);
+      const timeline = document.createElement("ol");
+      timeline.className = "report-timeline";
+      const submitted = document.createElement("li");
+      submitted.textContent = "Report submitted · " + new Date(report.created_at).toLocaleString();
+      timeline.append(submitted);
+      if (report.reviewed_at) {
+        const reviewed = document.createElement("li");
+        reviewed.textContent = "Seen by staff · " + new Date(report.reviewed_at).toLocaleString();
+        timeline.append(reviewed);
+      } else if (report.status !== "open") {
+        const reviewed = document.createElement("li");
+        reviewed.textContent = "Staff have updated this report. The exact review time isn't available for this older report.";
+        timeline.append(reviewed);
+      }
+      item.append(heading, status, details, timeline);
+      if (report.outcome_message) {
+        const outcomeHeading = document.createElement("strong");
+        outcomeHeading.textContent = "Staff update";
+        const outcome = document.createElement("p");
+        outcome.className = "report-outcome";
+        outcome.textContent = report.outcome_message;
+        item.append(outcomeHeading, outcome);
+      }
       list.append(item);
     }
   }
