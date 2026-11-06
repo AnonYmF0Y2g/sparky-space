@@ -92,3 +92,12 @@ main { min-height:55vh; }
 .auth-form,.profile-editor,.report-form { max-width:620px; }
 .appeal-form { border-top:1px solid var(--border); padding-top:12px; }
 @media(max-width:700px) { nav { justify-content:flex-start; } .captcha-wrap { width:100%; overflow:hidden; } }
+
+/* Community announcements */
+.announcement-list { display:grid; gap:12px; }
+.announcement-card { padding:16px; border:1px solid var(--border); border-radius:15px; background:var(--surface-raised); }
+.announcement-card h3 { display:inline; margin:0; color:var(--accent)!important; font-size:17px; }
+.announcement-card p { margin:9px 0 0; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.65; }
+.announcement-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:8px; color:var(--muted); font-size:12px; }
+.announcement-pin { display:inline-block; padding:3px 8px; border-radius:999px; background:var(--accent-soft); color:var(--accent); border:1px solid var(--border); font-size:11px; font-weight:750; }
+.announcement-empty { padding:15px; border:1px dashed var(--border); border-radius:14px; color:var(--muted); text-align:center; }
