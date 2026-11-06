@@ -149,6 +149,7 @@ a {
 .appeal-form textarea { width:100%; min-height:75px; padding:10px; border:1px solid #d9c3ed; border-radius:10px; font:inherit; }
 
 </style>
+<link rel="stylesheet" href="assets/theme.css">
 </head>
 
 <body>
@@ -157,6 +158,34 @@ a {
   <h1>♡ Sparky's Space ♡</h1>
   <p>A little corner of the internet :3</p>
   <p>✦ Welcome to my world ✦</p>
+  <details class="appearance-menu">
+    <summary aria-label="Open appearance settings">Appearance ⚙</summary>
+    <div class="appearance-panel">
+      <label for="theme-choice">Dark theme
+        <select id="theme-choice">
+          <option value="lavender">Lavender Night</option>
+          <option value="rose">Rose Quartz</option>
+          <option value="midnight">Midnight</option>
+          <option value="emerald">Emerald</option>
+          <option value="amber">Amber</option>
+          <option value="slate">Slate</option>
+        </select>
+      </label>
+      <label for="accent-choice">Accent color
+        <select id="accent-choice">
+          <option value="pink">Pink</option>
+          <option value="purple">Purple</option>
+          <option value="blue">Blue</option>
+          <option value="cyan">Cyan</option>
+          <option value="teal">Teal</option>
+          <option value="green">Green</option>
+          <option value="orange">Orange</option>
+          <option value="red">Red</option>
+        </select>
+      </label>
+      <p>Your choices are saved in this browser. Sparky's Space uses dark themes only.</p>
+    </div>
+  </details>
 </header>
 
 <nav>
@@ -661,6 +690,7 @@ a {
 })();
 </script>
 
+<script src="assets/theme.js"></script>
 </body>
 </html>
 
