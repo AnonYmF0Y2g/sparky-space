@@ -45,7 +45,7 @@ Do not add a Supabase service-role key. The function uses the visitor's authenti
 
 Deploy `supabase/functions/submit-community-action/index.ts` as the function named `submit-community-action`.
 
-Keep JWT verification enabled for this function. It must require a signed-in Supabase user. The function also checks the user's session itself, verifies the Turnstile token with Cloudflare Siteverify, checks the expected hostname and action, and then inserts the report or appeal using the authenticated user's database permissions.
+Set **Verify JWT with legacy secret** to **OFF** for this function. This project uses custom authentication inside the function: it requires a Bearer token, calls `supabase.auth.getUser()` to validate the signed-in user, and rejects requests without a valid user. The Supabase dashboard notes that legacy-secret verification only accepts JWTs signed with the legacy secret and recommends turning it off when the function implements its own JWT/authentication checks. The function also verifies the Turnstile token with Cloudflare Siteverify, checks the expected hostname and action, and inserts the report or appeal using the authenticated user's database permissions.
 
 ## 6. Verify the setup
 
