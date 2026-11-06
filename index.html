@@ -437,11 +437,7 @@ a {
       return;
     }
     list.textContent = "Loading your reports...";
-    const { data, error } = await client.from("reports")
-      .select("id, category, details, status, created_at, reviewed_at, outcome_message")
-      .eq("reporter_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(50);
+    const { data, error } = await client.rpc("get_my_reports");
     if (error) {
       list.textContent = "Report tracking isn't available yet. Apply the report-tracking database update, then refresh. (" + error.message + ")";
       return;
