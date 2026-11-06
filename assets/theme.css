@@ -75,3 +75,20 @@ a { color:var(--accent); }
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; }
 }
+
+/* Multi-page layout and Turnstile */
+.site-header { position:relative; }
+.site-header h1 { margin:0; }
+nav { display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; }
+nav a[aria-current="page"] { background:var(--accent-soft); color:var(--accent)!important; }
+main { min-height:55vh; }
+.quick-links { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-top:16px; }
+.quick-link { display:grid; gap:7px; padding:16px; border:1px solid var(--border); border-radius:14px; background:var(--surface-raised); text-decoration:none; }
+.quick-link strong { color:var(--accent); }
+.quick-link span { color:var(--muted); font-size:14px; }
+.captcha-wrap { display:grid; gap:6px; padding:12px; border:1px solid var(--border); border-radius:14px; background:var(--surface-raised); width:fit-content; max-width:100%; }
+.captcha-note { margin:0; color:var(--muted); font-size:12px; max-width:340px; }
+.soft-rule { border:0; border-top:1px solid var(--border); width:100%; margin:20px 0 8px; }
+.auth-form,.profile-editor,.report-form { max-width:620px; }
+.appeal-form { border-top:1px solid var(--border); padding-top:12px; }
+@media(max-width:700px) { nav { justify-content:flex-start; } .captcha-wrap { width:100%; overflow:hidden; } }
