@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d18">
+<title>Account · Sparky's Space ♡</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="site-header">
+  <h1>♡ Sparky's Space ♡</h1>
+  <p>A little corner of the internet :3</p>
+  <details class="appearance-menu">
+    <summary aria-label="Open appearance settings">Appearance ⚙</summary>
+    <div class="appearance-panel">
+      <label for="theme-choice">Dark theme
+        <select id="theme-choice">
+          <option value="lavender">Lavender Night</option><option value="rose">Rose Quartz</option>
+          <option value="midnight">Midnight</option><option value="emerald">Emerald</option>
+          <option value="amber">Amber</option><option value="slate">Slate</option>
+        </select>
+      </label>
+      <label for="accent-choice">Accent color
+        <select id="accent-choice">
+          <option value="pink">Pink</option><option value="purple">Purple</option>
+          <option value="blue">Blue</option><option value="cyan">Cyan</option>
+          <option value="teal">Teal</option><option value="green">Green</option>
+          <option value="orange">Orange</option><option value="red">Red</option>
+        </select>
+      </label>
+      <p>Your choices are saved in this browser. Dark themes only.</p>
+    </div>
+  </details>
+</header>
+<nav aria-label="Main navigation">
+  <a href="index.html">Home</a>
+  <a href="community.html">Community</a>
+  <a href="account.html" aria-current="page">Account</a>
+  <a href="safety.html">Safety &amp; Reports</a>
+</nav>
+<main>
+
+<section class="account-card" id="account">
+  <h2>♡ Community Account</h2>
+  <p>Create an account or sign in to Sparky's Space. Your email address is private and is not displayed on your public profile.</p>
+  <div id="signed-out">
+    <div class="auth-tabs">
+      <button type="button" id="show-signup">Create account</button>
+      <button type="button" class="secondary" id="show-login">Sign in</button>
+    </div>
+    <form class="auth-form" id="auth-form">
+      <label id="username-label">Username
+        <input id="auth-username" type="text" minlength="3" maxlength="20" autocomplete="username" placeholder="3–20 letters, numbers, _ or -" required>
+      </label>
+      <label>Email address<input id="auth-email" type="email" autocomplete="email" placeholder="you@example.com" required></label>
+      <label>Password<input id="auth-password" type="password" minlength="8" autocomplete="new-password" placeholder="At least 8 characters" required></label>
+      <div class="captcha-wrap"><div id="auth-captcha" data-action="auth"></div><p class="captcha-note" id="auth-captcha-note" role="status">Bot protection will appear here once configured.</p></div>
+      <button id="auth-submit" type="submit">Create account</button>
+    </form>
+  </div>
+  <div id="signed-in" hidden>
+    <p class="status">● You're signed in</p>
+    <p>Welcome, <strong id="account-username"></strong>!</p>
+    <p class="account-email" id="account-email">Your email address is private.</p>
+    <div class="account-actions"><button type="button" class="secondary" id="signout-button">Sign out</button></div>
+    <hr class="soft-rule">
+    <h3>♡ Edit your member profile</h3>
+    <form class="profile-editor" id="profile-form">
+      <label>Display name <input id="profile-display-name" maxlength="30" placeholder="How should members see you?"></label>
+      <label>Status <input id="profile-status" maxlength="60" placeholder="A short status message"></label>
+      <label>Bio <textarea id="profile-bio" maxlength="240" placeholder="A little about you (no private details)"></textarea></label>
+      <button type="submit" id="profile-save">Save profile</button>
+    </form>
+    <p class="auth-message" id="profile-message" role="status" aria-live="polite"></p>
+  </div>
+  <p class="auth-message" id="auth-message" role="status" aria-live="polite"></p>
+  <p><small>Privacy tip: don't use your real name, school, address, phone number, or other private details as your username.</small></p>
+</section>
+</main>
+<footer>Made with ♡ by Sparky<p>Thanks for visiting! ^w^</p></footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+<script defer src="assets/config.js"></script>
+<script defer src="assets/app.js"></script>
+<script defer src="assets/theme.js"></script>
+</body>
+</html>
