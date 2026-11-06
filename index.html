@@ -1,696 +1,81 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sparky's Space ♡</title>
-
-<style>
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: sans-serif;
-  background: #f5eaff;
-  color: #57416f;
-}
-
-header {
-  text-align: center;
-  padding: 55px 20px;
-  background: linear-gradient(135deg, #d9baff, #ffcbea);
-  border-bottom: 4px solid white;
-}
-
-header h1 {
-  font-size: 45px;
-  margin: 0;
-}
-
-header p {
-  font-size: 16px;
-}
-
-nav {
-  text-align: center;
-  padding: 17px;
-  background: #ead6ff;
-  position: sticky;
-  top: 0;
-}
-
-nav a {
-  color: #704b94;
-  text-decoration: none;
-  font-weight: bold;
-  margin: 0 12px;
-}
-
-nav a:hover {
-  color: #d66cae;
-}
-
-main {
-  max-width: 850px;
-  margin: 30px auto;
-  padding: 0 18px;
-}
-
-.card {
-  background: white;
-  padding: 25px;
-  border-radius: 22px;
-  margin-bottom: 22px;
-  border: 2px solid #ead7ff;
-  box-shadow: 0 5px 18px #a982c522;
-}
-
-h2 {
-  color: #a16acb;
-}
-
-.profile {
-  text-align: center;
-}
-
-.profile-name {
-  font-size: 27px;
-  font-weight: bold;
-}
-
-.tag {
-  display: inline-block;
-  background: #f0ddff;
-  padding: 7px 13px;
-  border-radius: 20px;
-  margin: 4px;
-  font-size: 13px;
-}
-
-.status {
-  color: #479c78;
-  font-weight: bold;
-}
-
-footer {
-  text-align: center;
-  padding: 30px;
-  background: #e5d0fa;
-}
-
-a {
-  scroll-behavior: smooth;
-}
-
-::selection {
-  background: #e9bfff;
-}
-
-/* Community account */
-.account-card { background:#fff; padding:25px; border-radius:22px; margin-bottom:22px; border:2px solid #ead7ff; box-shadow:0 5px 18px #a982c522; }
-.account-card h2 { margin-top:0; }
-.auth-tabs,.account-actions { display:flex; gap:10px; flex-wrap:wrap; margin:14px 0; }
-.auth-tabs button,.auth-form button,.account-actions button { border:0; border-radius:12px; padding:11px 16px; background:#a16acb; color:white; font-weight:bold; cursor:pointer; }
-.auth-tabs button.secondary,.account-actions button.secondary { background:#ead6ff; color:#704b94; }
-.auth-form { display:grid; gap:12px; max-width:460px; }
-.auth-form label { display:grid; gap:6px; font-weight:bold; }
-.auth-form input { width:100%; padding:12px; border:1px solid #d9c3ed; border-radius:10px; font:inherit; color:#57416f; background:#fffaff; }
-.auth-form button:disabled { opacity:.6; cursor:wait; }
-.auth-message { min-height:24px; overflow-wrap:anywhere; }
-.account-email { overflow-wrap:anywhere; color:#765c8d; }
-.profile-editor { display:grid; gap:10px; max-width:560px; margin-top:18px; }
-.profile-editor label { display:grid; gap:5px; font-weight:bold; }
-.profile-editor input,.profile-editor textarea { width:100%; padding:11px; border:1px solid #d9c3ed; border-radius:10px; font:inherit; color:#57416f; background:#fffaff; }
-.profile-editor textarea { min-height:90px; resize:vertical; }
-.profile-editor button { justify-self:start; border:0; border-radius:12px; padding:11px 16px; background:#a16acb; color:white; font-weight:bold; cursor:pointer; }
-.member-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:12px; }
-.member-card { background:#fffaff; border:1px solid #ead7ff; border-radius:15px; padding:15px; overflow-wrap:anywhere; }
-.member-card strong { color:#8a55b4; font-size:18px; }
-.member-card p { margin:7px 0; }
-.member-meta { color:#8a769b; font-size:12px; }
-.section-note { color:#806b91; font-size:14px; }
-
-
-.report-form { display:grid; gap:12px; max-width:620px; }
-.report-form label { display:grid; gap:6px; font-weight:bold; }
-.report-form input,.report-form select,.report-form textarea { width:100%; padding:11px; border:1px solid #d9c3ed; border-radius:10px; font:inherit; color:#57416f; background:#fffaff; }
-.report-form textarea { min-height:110px; resize:vertical; }
-.report-form button,.appeal-form button { justify-self:start; border:0; border-radius:12px; padding:11px 16px; background:#a16acb; color:white; font-weight:bold; cursor:pointer; }
-.report-form button:disabled,.appeal-form button:disabled { opacity:.6; cursor:wait; }
-.moderation-item { background:#fffaff; border:1px solid #ead7ff; border-radius:14px; padding:15px; margin:12px 0; overflow-wrap:anywhere; }
-.report-status { display:inline-block; padding:6px 10px; border-radius:999px; background:#f0ddff; color:#704b94; font-size:12px; font-weight:bold; text-transform:capitalize; }
-.report-timeline { margin:12px 0; padding-left:22px; }
-.report-timeline li { margin:7px 0; }
-.report-outcome { background:#f7efff; border-left:3px solid #a16acb; padding:10px 12px; border-radius:8px; white-space:pre-wrap; }
-.appeal-form { display:grid; gap:8px; margin-top:12px; }
-.appeal-form textarea { width:100%; min-height:75px; padding:10px; border:1px solid #d9c3ed; border-radius:10px; font:inherit; }
-
-</style>
+<meta name="theme-color" content="#100d18">
+<title>Home · Sparky's Space ♡</title>
 <link rel="stylesheet" href="assets/theme.css">
 </head>
-
 <body>
-
-<header>
+<header class="site-header">
   <h1>♡ Sparky's Space ♡</h1>
   <p>A little corner of the internet :3</p>
-  <p>✦ Welcome to my world ✦</p>
   <details class="appearance-menu">
     <summary aria-label="Open appearance settings">Appearance ⚙</summary>
     <div class="appearance-panel">
       <label for="theme-choice">Dark theme
         <select id="theme-choice">
-          <option value="lavender">Lavender Night</option>
-          <option value="rose">Rose Quartz</option>
-          <option value="midnight">Midnight</option>
-          <option value="emerald">Emerald</option>
-          <option value="amber">Amber</option>
-          <option value="slate">Slate</option>
+          <option value="lavender">Lavender Night</option><option value="rose">Rose Quartz</option>
+          <option value="midnight">Midnight</option><option value="emerald">Emerald</option>
+          <option value="amber">Amber</option><option value="slate">Slate</option>
         </select>
       </label>
       <label for="accent-choice">Accent color
         <select id="accent-choice">
-          <option value="pink">Pink</option>
-          <option value="purple">Purple</option>
-          <option value="blue">Blue</option>
-          <option value="cyan">Cyan</option>
-          <option value="teal">Teal</option>
-          <option value="green">Green</option>
-          <option value="orange">Orange</option>
-          <option value="red">Red</option>
+          <option value="pink">Pink</option><option value="purple">Purple</option>
+          <option value="blue">Blue</option><option value="cyan">Cyan</option>
+          <option value="teal">Teal</option><option value="green">Green</option>
+          <option value="orange">Orange</option><option value="red">Red</option>
         </select>
       </label>
-      <p>Your choices are saved in this browser. Sparky's Space uses dark themes only.</p>
+      <p>Your choices are saved in this browser. Dark themes only.</p>
     </div>
   </details>
 </header>
-
-<nav>
-  <a href="#home">Home</a>
-  <a href="#about">About</a>
-  <a href="#interests">Interests</a>
-  <a href="#projects">Projects</a>
-  <a href="#account">Account</a>
-  <a href="#members">Members</a>
+<nav aria-label="Main navigation">
+  <a href="index.html" aria-current="page">Home</a>
+  <a href="community.html">Community</a>
+  <a href="account.html">Account</a>
+  <a href="safety.html">Safety &amp; Reports</a>
 </nav>
-
 <main>
 
 <section class="card profile" id="home">
   <div class="profile-name">♡ Sparky ♡</div>
   <p>Protogen · Furry · Dreamer</p>
-  <p class="status">● Online</p>
-  <span class="tag">Furry</span>
-  <span class="tag">Technology</span>
-  <span class="tag">Creative</span>
+  <p class="status">● Welcome!</p>
+  <span class="tag">Furry</span><span class="tag">Technology</span><span class="tag">Creative</span>
   <p>Hewwo! Welcome to my space! ^w^</p>
 </section>
-
-
-<section class="account-card" id="account">
-  <h2>♡ Community Account</h2>
-  <p>Create an account or sign in to Sparky's Space. Your email address is private and is not displayed on your public profile.</p>
-  <div id="signed-out">
-    <div class="auth-tabs">
-      <button type="button" id="show-signup">Create account</button>
-      <button type="button" class="secondary" id="show-login">Sign in</button>
-    </div>
-    <form class="auth-form" id="auth-form">
-      <label id="username-label">Username
-        <input id="auth-username" type="text" minlength="3" maxlength="20" autocomplete="username" placeholder="3–20 letters, numbers, _ or -" required>
-      </label>
-      <label>Email address
-        <input id="auth-email" type="email" autocomplete="email" placeholder="you@example.com" required>
-      </label>
-      <label>Password
-        <input id="auth-password" type="password" minlength="8" autocomplete="new-password" placeholder="At least 8 characters" required>
-      </label>
-      <button id="auth-submit" type="submit">Create account</button>
-    </form>
-  </div>
-  <div id="signed-in" hidden>
-    <p class="status">● You're signed in</p>
-    <p>Welcome, <strong id="account-username"></strong>!</p>
-    <p class="account-email" id="account-email">Your email address is private.</p>
-    <div class="account-actions"><button type="button" class="secondary" id="signout-button">Sign out</button></div>
-    <hr style="border:0;border-top:1px solid #ead7ff;width:100%;margin:20px 0 8px">
-    <h3>♡ Edit your member profile</h3>
-    <form class="profile-editor" id="profile-form">
-      <label>Display name <input id="profile-display-name" maxlength="30" placeholder="How should members see you?"></label>
-      <label>Status <input id="profile-status" maxlength="60" placeholder="A short status message"></label>
-      <label>Bio <textarea id="profile-bio" maxlength="240" placeholder="A little about you (no private details)"></textarea></label>
-      <button type="submit" id="profile-save">Save profile</button>
-    </form>
-    <p class="auth-message" id="profile-message" role="status" aria-live="polite"></p>
-  </div>
-  <p class="auth-message" id="auth-message" role="status" aria-live="polite"></p>
-  <p><small>Privacy tip: don't use your real name, school, address, phone number, or other private details as your username.</small></p>
-</section>
-
-<section class="card" id="members">
-  <h2>♡ Community Members</h2>
-  <p class="section-note">Public member profiles. Email addresses and login details are never shown here.</p>
-  <div class="member-grid" id="member-directory"><p>Loading members...</p></div>
-  <p class="section-note" id="members-message" role="status" aria-live="polite"></p>
-</section>
-
-
-
-<section class="card" id="report">
-  <h2>♡ Report a Concern</h2>
-  <p class="section-note">Signed-in members can report a public username or raise a general community concern. Please don't include private information, passwords, addresses, or contact details.</p>
-  <form class="report-form" id="report-form">
-    <label>Member username (optional)
-      <input id="report-username" maxlength="20" placeholder="Username to report">
-    </label>
-    <label>Category
-      <select id="report-category" required>
-        <option value="harassment">Harassment or bullying</option>
-        <option value="inappropriate_content">Inappropriate content</option>
-        <option value="spam">Spam</option>
-        <option value="impersonation">Impersonation</option>
-        <option value="safety_concern">Safety concern</option>
-        <option value="other">Other</option>
-      </select>
-    </label>
-    <label>What happened?
-      <textarea id="report-details" minlength="10" maxlength="2000" required placeholder="Describe the concern without sharing private information."></textarea>
-    </label>
-    <button id="report-submit" type="submit">Submit report</button>
-  </form>
-  <p class="auth-message" id="report-message" role="status" aria-live="polite"></p>
-</section>
-
-<section class="card" id="my-reports">
-  <h2>♡ My Submitted Reports</h2>
-  <p class="section-note">Track the status of reports you have submitted. Only you and authorized staff can view report details.</p>
-  <div id="my-reports-list"><p>Sign in to view your reports.</p></div>
-</section>
-
-<section class="card" id="my-moderation">
-  <h2>♡ My Moderation History</h2>
-  <p class="section-note">Only you can see moderation records attached to your account. If an action appears here, you can submit an appeal.</p>
-  <div id="my-moderation-list"><p>Sign in to view your account notices.</p></div>
-</section>
-
-<section class="card" id="about">
+<section class="card">
   <h2>♡ About Me</h2>
-  <p>
-    Hewwo! I'm Sparky. This is my personal
-    corner of the internet where I can share
-    my interests, projects and little discoveries.
-  </p>
+  <p>Hewwo! I'm Sparky. This is my personal corner of the internet where I can share my interests, projects, and little discoveries.</p>
   <p>Make yourself comfortable! :3</p>
 </section>
-
-<section class="card" id="interests">
+<section class="card">
   <h2>♡ My Interests</h2>
-  <ul>
-    <li>Protogens and furry culture</li>
-    <li>Computers and technology</li>
-    <li>Music and electronic sounds</li>
-    <li>Creative projects</li>
-    <li>Internet exploration</li>
-  </ul>
+  <ul><li>Protogens and furry culture</li><li>Computers and technology</li><li>Music and electronic sounds</li><li>Creative projects</li><li>Internet exploration</li></ul>
 </section>
-
-<section class="card" id="projects">
+<section class="card">
   <h2>♡ My Projects</h2>
   <p>Things I'm working on and creating.</p>
-  <span class="tag">Personal Website</span>
-  <span class="tag">Creative Projects</span>
-  <span class="tag">More coming soon!</span>
+  <span class="tag">Personal Website</span><span class="tag">Creative Projects</span><span class="tag">More coming soon!</span>
 </section>
-
+<section class="card">
+  <h2>♡ Explore Sparky's Space</h2>
+  <div class="quick-links">
+    <a class="quick-link" href="community.html"><strong>Community</strong><span>Browse public member profiles</span></a>
+    <a class="quick-link" href="account.html"><strong>Your account</strong><span>Sign in and edit your profile</span></a>
+    <a class="quick-link" href="safety.html"><strong>Safety &amp; Reports</strong><span>Report a concern and track updates</span></a>
+  </div>
+</section>
 </main>
-
-<footer>
-  Made with ♡ by Sparky
-  <p>Thanks for visiting! ^w^</p>
-</footer>
-
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-(() => {
-  const SUPABASE_URL = "https://wuwvazwrqmdqiztyxfrs.supabase.co";
-  // Browser-safe publishable key. Never place a secret/service-role key in a public website.
-  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_KfdFoBj7R-Zf5vQv6L4NYA_rKhju2oj";
-  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-  const profileForm = document.getElementById("profile-form");
-  const profileMessage = document.getElementById("profile-message");
-  const memberDirectory = document.getElementById("member-directory");
-  let activeUser = null;
-
-  async function loadOwnProfile(user) {
-    if (!user) return;
-    const { data, error } = await client.from("profiles")
-      .select("username, display_name, bio, status")
-      .eq("id", user.id).maybeSingle();
-    if (error) {
-      profileMessage.textContent = "Couldn't load your profile: " + error.message;
-      return;
-    }
-    if (data) {
-      document.getElementById("profile-display-name").value = data.display_name || "";
-      document.getElementById("profile-status").value = data.status || "";
-      document.getElementById("profile-bio").value = data.bio || "";
-    } else {
-      profileMessage.textContent = "Your profile is still being prepared. Please refresh in a moment.";
-    }
-  }
-
-  async function loadMembers() {
-    memberDirectory.innerHTML = "<p>Loading members...</p>";
-    const { data, error } = await client.from("profiles")
-      .select("username, display_name, bio, status, created_at")
-      .order("created_at", { ascending: true }).limit(100);
-    if (error) {
-      memberDirectory.textContent = "Member directory is unavailable: " + error.message;
-      return;
-    }
-    if (!data || data.length === 0) {
-      memberDirectory.textContent = "No member profiles yet. Be the first!";
-      return;
-    }
-    memberDirectory.replaceChildren();
-    for (const member of data) {
-      const card = document.createElement("article");
-      card.className = "member-card";
-      const name = document.createElement("strong");
-      name.textContent = member.display_name || member.username || "Member";
-      const username = document.createElement("p");
-      username.textContent = "@" + (member.username || "member");
-      const status = document.createElement("p");
-      status.textContent = member.status || "No status set";
-      const bio = document.createElement("p");
-      bio.textContent = member.bio || "This member hasn't added a bio yet.";
-      const joined = document.createElement("p");
-      joined.className = "member-meta";
-      joined.textContent = member.created_at ? "Joined " + new Date(member.created_at).toLocaleDateString() : "";
-      card.append(name, username, status, bio, joined);
-      memberDirectory.append(card);
-    }
-    document.getElementById("members-message").textContent = data.length === 100 ? "Showing the first 100 members." : data.length + " member profile(s).";
-  }
-
-  profileForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (!activeUser) return;
-    const save = document.getElementById("profile-save");
-    save.disabled = true;
-    profileMessage.textContent = "Saving profile...";
-    const values = {
-      display_name: document.getElementById("profile-display-name").value.trim(),
-      status: document.getElementById("profile-status").value.trim(),
-      bio: document.getElementById("profile-bio").value.trim()
-    };
-    const { error } = await client.from("profiles").update(values).eq("id", activeUser.id);
-    save.disabled = false;
-    profileMessage.textContent = error ? "Couldn't save: " + error.message : "Profile saved! ^w^";
-    if (!error) loadMembers();
-  });
-
-
-  const reportForm = document.getElementById("report-form");
-  const reportMessage = document.getElementById("report-message");
-  const myModerationList = document.getElementById("my-moderation-list");
-
-  reportForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (!activeUser) {
-      reportMessage.textContent = "Please sign in before submitting a report.";
-      return;
-    }
-    const submit = document.getElementById("report-submit");
-    const username = document.getElementById("report-username").value.trim();
-    const category = document.getElementById("report-category").value;
-    const details = document.getElementById("report-details").value.trim();
-    submit.disabled = true;
-    reportMessage.textContent = "Submitting report...";
-    try {
-      let reportedUserId = null;
-      if (username) {
-        const { data: target, error: lookupError } = await client.from("profiles")
-          .select("id, username").eq("username", username).maybeSingle();
-        if (lookupError) throw lookupError;
-        if (!target) throw new Error("That username wasn't found. Check the spelling or leave it blank for a general report.");
-        if (target.id === activeUser.id) throw new Error("You can't report your own account.");
-        reportedUserId = target.id;
-      }
-      const { error } = await client.from("reports").insert({
-        reporter_id: activeUser.id,
-        reported_user_id: reportedUserId,
-        category,
-        details
-      });
-      if (error) throw error;
-      reportForm.reset();
-      reportMessage.textContent = "Report submitted. Thank you for helping keep the community safer.";
-      await loadMyReports(activeUser);
-    } catch (error) {
-      reportMessage.textContent = "Couldn't submit report: " + (error.message || "Please try again.");
-    } finally {
-      submit.disabled = false;
-    }
-  });
-
-  async function loadMyReports(user) {
-    const list = document.getElementById("my-reports-list");
-    list.replaceChildren();
-    if (!user) {
-      list.textContent = "Sign in to view your reports.";
-      return;
-    }
-    list.textContent = "Loading your reports...";
-    const { data, error } = await client.rpc("get_my_reports");
-    if (error) {
-      list.textContent = "Report tracking isn't available yet. Apply the report-tracking database update, then refresh. (" + error.message + ")";
-      return;
-    }
-    list.replaceChildren();
-    if (!data || data.length === 0) {
-      list.textContent = "You haven't submitted any reports.";
-      return;
-    }
-    for (const report of data) {
-      const item = document.createElement("article");
-      item.className = "moderation-item";
-      const heading = document.createElement("strong");
-      heading.textContent = report.category.replaceAll("_", " ").toUpperCase();
-      const status = document.createElement("span");
-      status.className = "report-status";
-      status.textContent = report.status.replaceAll("_", " ");
-      const details = document.createElement("p");
-      details.textContent = report.details;
-      const timeline = document.createElement("ol");
-      timeline.className = "report-timeline";
-      const submitted = document.createElement("li");
-      submitted.textContent = "Report submitted · " + new Date(report.created_at).toLocaleString();
-      timeline.append(submitted);
-      if (report.reviewed_at) {
-        const reviewed = document.createElement("li");
-        reviewed.textContent = "Seen by staff · " + new Date(report.reviewed_at).toLocaleString();
-        timeline.append(reviewed);
-      } else if (report.status !== "open") {
-        const reviewed = document.createElement("li");
-        reviewed.textContent = "Staff have updated this report. The exact review time isn't available for this older report.";
-        timeline.append(reviewed);
-      }
-      item.append(heading, status, details, timeline);
-      if (report.outcome_message) {
-        const outcomeHeading = document.createElement("strong");
-        outcomeHeading.textContent = "Staff update";
-        const outcome = document.createElement("p");
-        outcome.className = "report-outcome";
-        outcome.textContent = report.outcome_message;
-        item.append(outcomeHeading, outcome);
-      }
-      list.append(item);
-    }
-  }
-
-  async function loadMyModeration(user) {
-    myModerationList.replaceChildren();
-    if (!user) {
-      myModerationList.textContent = "Sign in to view your account notices.";
-      return;
-    }
-    myModerationList.textContent = "Loading your moderation history...";
-    const { data, error } = await client.from("moderation_actions")
-      .select("id, action_type, reason, created_at, expires_at")
-      .eq("target_user_id", user.id).order("created_at", { ascending: false }).limit(50);
-    if (error) {
-      myModerationList.textContent = "Couldn't load moderation history: " + error.message;
-      return;
-    }
-    myModerationList.replaceChildren();
-    if (!data || data.length === 0) {
-      myModerationList.textContent = "No moderation actions are recorded for your account.";
-      return;
-    }
-    for (const action of data) {
-      const item = document.createElement("article");
-      item.className = "moderation-item";
-      const heading = document.createElement("strong");
-      heading.textContent = action.action_type.replaceAll("_", " ").toUpperCase();
-      const reason = document.createElement("p");
-      reason.textContent = action.reason;
-      const date = document.createElement("p");
-      date.className = "member-meta";
-      date.textContent = "Recorded " + new Date(action.created_at).toLocaleString() +
-        (action.expires_at ? " · Expires " + new Date(action.expires_at).toLocaleString() : "");
-      item.append(heading, reason, date);
-      if (action.action_type !== "note" && action.action_type !== "lift_ban") {
-        const appeal = document.createElement("form");
-        appeal.className = "appeal-form";
-        const label = document.createElement("label");
-        label.textContent = "Appeal this action";
-        const messageBox = document.createElement("textarea");
-        messageBox.minLength = 10;
-        messageBox.maxLength = 2000;
-        messageBox.required = true;
-        messageBox.placeholder = "Explain why you think this action should be reviewed.";
-        const button = document.createElement("button");
-        button.type = "submit";
-        button.textContent = "Submit appeal";
-        const status = document.createElement("p");
-        status.className = "section-note";
-        status.setAttribute("role", "status");
-        appeal.append(label, messageBox, button, status);
-        appeal.addEventListener("submit", async (event) => {
-          event.preventDefault();
-          button.disabled = true;
-          status.textContent = "Submitting appeal...";
-          const { error: appealError } = await client.from("appeals").insert({
-            action_id: action.id,
-            appellant_id: user.id,
-            message: messageBox.value.trim()
-          });
-          button.disabled = false;
-          status.textContent = appealError
-            ? (appealError.code === "23505" ? "An appeal has already been submitted for this action." : "Couldn't submit appeal: " + appealError.message)
-            : "Appeal submitted for staff review.";
-          if (!appealError) {
-            messageBox.disabled = true;
-            button.disabled = true;
-          }
-        });
-        item.append(appeal);
-      }
-      myModerationList.append(item);
-    }
-  }
-
-  const form = document.getElementById("auth-form");
-  const usernameInput = document.getElementById("auth-username");
-  const usernameLabel = document.getElementById("username-label");
-  const emailInput = document.getElementById("auth-email");
-  const passwordInput = document.getElementById("auth-password");
-  const submitButton = document.getElementById("auth-submit");
-  const message = document.getElementById("auth-message");
-  const signedOut = document.getElementById("signed-out");
-  const signedIn = document.getElementById("signed-in");
-  let mode = "signup";
-
-  function say(text) { message.textContent = text; }
-  function setMode(nextMode) {
-    mode = nextMode;
-    const creating = mode === "signup";
-    usernameLabel.hidden = !creating;
-    usernameInput.required = creating;
-    usernameInput.disabled = !creating;
-    submitButton.textContent = creating ? "Create account" : "Sign in";
-    document.getElementById("show-signup").classList.toggle("secondary", !creating);
-    document.getElementById("show-login").classList.toggle("secondary", creating);
-    passwordInput.autocomplete = creating ? "new-password" : "current-password";
-    say("");
-  }
-  function renderUser(user) {
-    activeUser = user || null;
-    signedOut.hidden = Boolean(user);
-    signedIn.hidden = !user;
-    if (user) {
-      document.getElementById("account-username").textContent = user.user_metadata?.username || "Member";
-      document.getElementById("account-email").textContent = "Your email address is private and is not shown in the member directory.";
-    } else {
-      form.reset();
-      setMode("signup");
-    }
-  }
-
-  document.getElementById("show-signup").addEventListener("click", () => setMode("signup"));
-  document.getElementById("show-login").addEventListener("click", () => setMode("login"));
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
-    submitButton.disabled = true;
-    say(mode === "signup" ? "Creating your account..." : "Signing you in...");
-    try {
-      let result;
-      if (mode === "signup") {
-        const username = usernameInput.value.trim();
-        if (!/^[a-zA-Z0-9_-]{3,20}$/.test(username)) {
-          throw new Error("Username must be 3–20 characters and use only letters, numbers, _ or -.");
-        }
-        result = await client.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { username },
-            emailRedirectTo: "https://anonymf0y2g.github.io/sparky-space/"
-          }
-        });
-        if (result.error) throw result.error;
-        if (result.data.session) {
-          say("Account created! You're signed in.");
-        } else {
-          say("Account created. Check your email for the confirmation link, then come back here to sign in.");
-          setMode("login");
-        }
-      } else {
-        result = await client.auth.signInWithPassword({ email, password });
-        if (result.error) throw result.error;
-        say("Signed in successfully!");
-      }
-    } catch (error) {
-      say(error.message || "Something went wrong. Please try again.");
-    } finally {
-      submitButton.disabled = false;
-    }
-  });
-
-  document.getElementById("signout-button").addEventListener("click", async () => {
-    const { error } = await client.auth.signOut();
-    say(error ? error.message : "You have been signed out.");
-  });
-
-  client.auth.getSession().then(({ data, error }) => {
-    if (error) say(error.message);
-    const user = data?.session?.user || null;
-    renderUser(user);
-    if (user) loadOwnProfile(user);
-    loadMyModeration(user);
-    loadMyReports(user);
-  });
-  client.auth.onAuthStateChange((_event, session) => {
-    const user = session?.user || null;
-    renderUser(user);
-    if (user) loadOwnProfile(user);
-    loadMyModeration(user);
-    loadMyReports(user);
-  });
-  loadMembers();
-  setMode("signup");
-})();
-</script>
-
-<script src="assets/theme.js"></script>
+<footer>Made with ♡ by Sparky<p>Thanks for visiting! ^w^</p></footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+<script defer src="assets/config.js"></script>
+<script defer src="assets/app.js"></script>
+<script defer src="assets/theme.js"></script>
 </body>
 </html>
-
