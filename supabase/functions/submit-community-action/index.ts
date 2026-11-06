@@ -20,7 +20,15 @@ function response(status: number, body: Record<string, unknown>) {
 }
 
 Deno.serve(async (req: Request) => {
-  if (req.method === "OPTIONS") return response(204, {});
+  if (req.method === "OPTIONS") return new Response(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+      "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Vary": "Origin"
+    }
+  });
   if (req.method !== "POST") return response(405, { success: false, error: "Method not allowed." });
   if (req.headers.get("origin") !== ALLOWED_ORIGIN) return response(403, { success: false, error: "Origin not allowed." });
 
