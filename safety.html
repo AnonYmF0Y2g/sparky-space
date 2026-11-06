@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d18">
+<title>Safety & Reports · Sparky's Space ♡</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="site-header">
+  <h1>♡ Sparky's Space ♡</h1>
+  <p>A little corner of the internet :3</p>
+  <details class="appearance-menu">
+    <summary aria-label="Open appearance settings">Appearance ⚙</summary>
+    <div class="appearance-panel">
+      <label for="theme-choice">Dark theme
+        <select id="theme-choice">
+          <option value="lavender">Lavender Night</option><option value="rose">Rose Quartz</option>
+          <option value="midnight">Midnight</option><option value="emerald">Emerald</option>
+          <option value="amber">Amber</option><option value="slate">Slate</option>
+        </select>
+      </label>
+      <label for="accent-choice">Accent color
+        <select id="accent-choice">
+          <option value="pink">Pink</option><option value="purple">Purple</option>
+          <option value="blue">Blue</option><option value="cyan">Cyan</option>
+          <option value="teal">Teal</option><option value="green">Green</option>
+          <option value="orange">Orange</option><option value="red">Red</option>
+        </select>
+      </label>
+      <p>Your choices are saved in this browser. Dark themes only.</p>
+    </div>
+  </details>
+</header>
+<nav aria-label="Main navigation">
+  <a href="index.html">Home</a>
+  <a href="community.html">Community</a>
+  <a href="account.html">Account</a>
+  <a href="safety.html" aria-current="page">Safety &amp; Reports</a>
+</nav>
+<main>
+
+<section class="card">
+  <h2>♡ Safety &amp; Reports</h2>
+  <p class="section-note">Signed-in members can report a public username or raise a general community concern. Please don't include private information, passwords, addresses, or contact details.</p>
+  <form class="report-form" id="report-form">
+    <label>Member username (optional)<input id="report-username" maxlength="20" placeholder="Username to report"></label>
+    <label>Category
+      <select id="report-category" required>
+        <option value="harassment">Harassment or bullying</option><option value="inappropriate_content">Inappropriate content</option>
+        <option value="spam">Spam</option><option value="impersonation">Impersonation</option>
+        <option value="safety_concern">Safety concern</option><option value="other">Other</option>
+      </select>
+    </label>
+    <label>What happened?<textarea id="report-details" minlength="10" maxlength="2000" required placeholder="Describe the concern without sharing private information."></textarea></label>
+    <div class="captcha-wrap"><div id="community-captcha" data-action="community_action"></div><p class="captcha-note" id="community-captcha-note" role="status">Bot protection will appear here once configured.</p></div>
+    <button id="report-submit" type="submit">Submit report</button>
+  </form>
+  <p class="auth-message" id="report-message" role="status" aria-live="polite"></p>
+</section>
+<section class="card">
+  <h2>♡ My Submitted Reports</h2>
+  <p class="section-note">Track the status of reports you have submitted. Only you and authorized staff can view report details.</p>
+  <div id="my-reports-list"><p>Sign in to view your reports.</p></div>
+</section>
+<section class="card">
+  <h2>♡ My Moderation History</h2>
+  <p class="section-note">Only you can see moderation records attached to your account. If an action appears here, you can submit an appeal.</p>
+  <div id="my-moderation-list"><p>Sign in to view your account notices.</p></div>
+</section>
+</main>
+<footer>Made with ♡ by Sparky<p>Thanks for visiting! ^w^</p></footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+<script defer src="assets/config.js"></script>
+<script defer src="assets/app.js"></script>
+<script defer src="assets/theme.js"></script>
+</body>
+</html>
