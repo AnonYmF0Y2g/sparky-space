@@ -150,12 +150,16 @@
       item.append(heading, reason, date);
       if (action.action_type !== "note" && action.action_type !== "lift_ban") {
         const appeal = document.createElement("form"); appeal.className = "appeal-form";
+        const honeypotLabel = document.createElement("label"); honeypotLabel.className = "honeypot-field"; honeypotLabel.setAttribute("aria-hidden", "true");
+        honeypotLabel.textContent = "Website";
+        const honeypotInput = document.createElement("input"); honeypotInput.name = "website"; honeypotInput.type = "text"; honeypotInput.autocomplete = "off"; honeypotInput.tabIndex = -1; honeypotInput.setAttribute("aria-hidden", "true");
+        honeypotLabel.append(honeypotInput);
         const label = document.createElement("label"); label.textContent = "Appeal this action";
         const messageBox = document.createElement("textarea"); messageBox.minLength = 10; messageBox.maxLength = 2000; messageBox.required = true;
         messageBox.placeholder = "Explain why you think this action should be reviewed.";
         const button = document.createElement("button"); button.type = "submit"; button.textContent = "Submit appeal";
         const status = document.createElement("p"); status.className = "section-note"; status.setAttribute("role", "status");
-        appeal.append(label, messageBox, button, status);
+        appeal.append(honeypotLabel, label, messageBox, button, status);
         appeal.addEventListener("submit", async (event) => {
           event.preventDefault();
           if (!activeUser) { status.textContent = "Please sign in first."; return; }
@@ -164,7 +168,7 @@
           button.disabled = true; status.textContent = "Submitting appeal...";
           try {
             const { data: result, error: appealError } = await client.functions.invoke("submit-community-action", {
-              body: { action: "appeal", action_id: action.id, message: messageBox.value.trim(), token }
+              body: { action: "appeal", action_id: action.id, message: messageBox.value.trim(), website: honeypotInput.value, token }
             });
             if (appealError) throw appealError;
             if (!result?.success) throw new Error(result?.error || "The appeal could not be submitted.");
@@ -190,7 +194,7 @@
     try {
       const { data, error } = await client.functions.invoke("submit-community-action", {
         body: {
-          action: "report", token,
+          action: "report", token, website: byId("report-website").value,
           username: byId("report-username").value.trim(),
           category: byId("report-category").value,
           details: byId("report-details").value.trim()
