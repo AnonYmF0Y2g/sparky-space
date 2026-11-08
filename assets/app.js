@@ -454,9 +454,144 @@
     }
   }
 
+
+  async function loadCommunityPosts(user = activeUser) {
+    const root = byId("image-board-grid");
+    if (!root) return;
+    root.textContent = "Loading the community gallery...";
+    const { data, error } = await client.from("community_posts")
+      .select("id,user_id,title,caption,tags,storage_path,status,created_at")
+      .order("created_at", { ascending: false }).limit(60);
+    if (error) { root.textContent = "The image board is unavailable: " + error.message; return; }
+    root.replaceChildren();
+    if (!data?.length) { root.textContent = "No approved images yet. Be the first to submit one!"; return; }
+    for (const post of data) {
+      const { data: signed, error: signedError } = await client.storage.from("community-images").createSignedUrl(post.storage_path, 3600);
+      if (signedError || !signed?.signedUrl) continue;
+      const card = document.createElement("article"); card.className = "image-post-card";
+      const image = document.createElement("img"); image.src = signed.signedUrl; image.alt = post.title; image.loading = "lazy";
+      const body = document.createElement("div"); body.className = "image-post-body";
+      const heading = document.createElement("h3"); heading.textContent = post.title;
+      const caption = document.createElement("p"); caption.textContent = post.caption || "";
+      const meta = document.createElement("p"); meta.className = "member-meta";
+      meta.textContent = (post.status === "approved" ? "Community gallery" : post.status === "pending" ? "Pending staff review" : "Not published") + " · " + new Date(post.created_at).toLocaleDateString();
+      body.append(heading);
+      if (post.caption) body.append(caption);
+      if (Array.isArray(post.tags) && post.tags.length) {
+        const tags = document.createElement("div"); tags.className = "image-post-tags";
+        for (const tag of post.tags) { const chip = document.createElement("span"); chip.className = "tag"; chip.textContent = tag; tags.append(chip); }
+        body.append(tags);
+      }
+      body.append(meta);
+      if (post.status !== "approved" && user?.id === post.user_id) {
+        const remove = document.createElement("button"); remove.type = "button"; remove.className = "secondary"; remove.textContent = "Delete pending post";
+        remove.addEventListener("click", async () => {
+          if (!window.confirm("Delete this pending image submission?")) return;
+          remove.disabled = true;
+          const { error: rowError } = await client.from("community_posts").delete().eq("id", post.id);
+          if (rowError) { meta.textContent = "Couldn't delete: " + rowError.message; remove.disabled = false; return; }
+          await client.storage.from("community-images").remove([post.storage_path]);
+          loadCommunityPosts(user);
+        });
+        body.append(remove);
+      }
+      card.append(image, body); root.append(card);
+    }
+    if (!root.children.length) root.textContent = "No images are currently visible.";
+  }
+
+  const imageUploadForm = byId("image-upload-form");
+  if (imageUploadForm) imageUploadForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const status = byId("image-upload-message");
+    const button = byId("image-upload-submit");
+    const file = byId("image-upload-file").files?.[0];
+    const userResult = await client.auth.getUser();
+    const user = userResult.data?.user;
+    if (userResult.error || !user) { status.textContent = "Please sign in before submitting an image."; return; }
+    if (!file) { status.textContent = "Choose an image first."; return; }
+    if (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024) {
+      status.textContent = "Choose a JPG, PNG or WebP image under 5 MB."; return;
+    }
+    const token = captchaToken(communityWidget);
+    if (!token) { status.textContent = "Complete the verification check before submitting."; return; }
+    const title = byId("image-upload-title").value.trim();
+    const caption = byId("image-upload-caption").value.trim();
+    const tags = byId("image-upload-tags").value.split(",").map(tag => tag.trim().toLowerCase()).filter(Boolean);
+    if (tags.length > 8 || tags.some(tag => !/^[a-z0-9-]{2,20}$/.test(tag))) {
+      status.textContent = "Use up to eight tags, each 2–20 letters, numbers or hyphens."; return;
+    }
+    const extension = file.type === "image/jpeg" ? "jpg" : file.type === "image/png" ? "png" : "webp";
+    const path = user.id + "/" + crypto.randomUUID() + "." + extension;
+    button.disabled = true; status.textContent = "Uploading your image securely...";
+    let uploaded = false;
+    try {
+      const { error: uploadError } = await client.storage.from("community-images").upload(path, file, {
+        contentType: file.type, cacheControl: "3600", upsert: false
+      });
+      if (uploadError) throw uploadError;
+      uploaded = true;
+      const { data, error } = await client.functions.invoke("submit-community-action", {
+        body: {
+          action: "image_post", token, website: "", title, caption, tags,
+          storage_path: path, rules_accepted: byId("image-rules-accepted").checked
+        }
+      });
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || "The post could not be queued.");
+      imageUploadForm.reset();
+      status.textContent = "Submitted! Your image is private until a moderator approves it.";
+      await loadCommunityPosts(user);
+    } catch (error) {
+      if (uploaded) await client.storage.from("community-images").remove([path]);
+      status.textContent = "Couldn't submit the image: " + (error.message || "Please try again.");
+    } finally { button.disabled = false; resetCaptcha(communityWidget); }
+  });
+
+  async function loadStaffImageQueue(user) {
+    const root = byId("staff-image-queue");
+    if (!root) return;
+    root.replaceChildren();
+    if (!user) { root.textContent = "Sign in with an authorized staff account to review image submissions."; return; }
+    const { data: role, error: roleError } = await client.from("staff_roles").select("role").eq("user_id", user.id).maybeSingle();
+    if (roleError || !role) { root.textContent = "This page is restricted to authorized staff."; return; }
+    const { data, error } = await client.from("community_posts")
+      .select("id,user_id,title,caption,tags,storage_path,status,created_at")
+      .in("status", ["pending","approved","rejected"]).order("created_at", { ascending: true }).limit(100);
+    if (error) { root.textContent = "Couldn't load image submissions: " + error.message; return; }
+    if (!data?.length) { root.textContent = "There are no image submissions to review."; return; }
+    for (const post of data) {
+      const card = document.createElement("article"); card.className = "privacy-section";
+      const heading = document.createElement("h3"); heading.textContent = post.title + " · " + post.status;
+      const details = document.createElement("p"); details.textContent = post.caption || "No caption";
+      const owner = document.createElement("p"); owner.className = "member-meta"; owner.textContent = "Submitted " + new Date(post.created_at).toLocaleString();
+      card.append(heading, details, owner);
+      const { data: signed } = await client.storage.from("community-images").createSignedUrl(post.storage_path, 900);
+      if (signed?.signedUrl) { const image = document.createElement("img"); image.className = "staff-review-image"; image.src = signed.signedUrl; image.alt = post.title; card.append(image); }
+      const actions = document.createElement("div"); actions.className = "privacy-actions";
+      for (const [label, nextStatus] of [["Approve","approved"],["Reject","rejected"],["Remove","removed"]]) {
+        if (post.status === nextStatus) continue;
+        const button = document.createElement("button"); button.type = "button"; button.textContent = label;
+        button.addEventListener("click", async () => {
+          if (!window.confirm(label + " this image submission?")) return;
+          button.disabled = true;
+          const { error: updateError } = await client.from("community_posts").update({
+            status: nextStatus, reviewed_at: new Date().toISOString(), reviewed_by: user.id
+          }).eq("id", post.id);
+          if (updateError) { details.textContent = "Update failed: " + updateError.message; button.disabled = false; }
+          else loadStaffImageQueue(user);
+        });
+        actions.append(button);
+      }
+      card.append(actions); root.append(card);
+    }
+  }
+
   function refreshUserData(user, session) {
     renderUser(user);
     loadStaffDeletionQueue(user);
+    loadStaffImageQueue(user);
+    loadCommunityPosts(user);
     renderSecuritySession(user, session);
     if (user) loadOwnProfile(user);
     loadMyModeration(user);
