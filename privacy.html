@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d18">
+<title>Privacy Center · Sparky's Space ♡</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="site-header">
+  <h1>♡ Sparky's Space ♡</h1>
+  <p>A little corner of the internet :3</p>
+  <details class="appearance-menu">
+    <summary aria-label="Open appearance settings">Appearance ⚙</summary>
+    <div class="appearance-panel">
+      <label for="theme-choice">Theme
+        <select id="theme-choice">
+          <option value="lavender">Lavender Night</option><option value="rose">Rose Quartz</option>
+          <option value="midnight">Midnight</option><option value="emerald">Emerald</option>
+          <option value="amber">Amber</option><option value="slate">Slate</option>
+          <option value="sakura">Sakura Bloom</option><option value="ocean">Ocean Depths</option>
+          <option value="aurora">Aurora Glow</option><option value="cherry">Cherry Cola</option>
+          <option value="mocha">Mocha</option>
+        </select>
+      </label>
+      <label for="accent-choice">Accent color
+        <select id="accent-choice">
+          <option value="pink">Pink</option><option value="purple">Purple</option>
+          <option value="blue">Blue</option><option value="cyan">Cyan</option>
+          <option value="teal">Teal</option><option value="green">Green</option>
+          <option value="orange">Orange</option><option value="red">Red</option>
+        </select>
+      </label>
+      <label for="text-size-choice">Text size
+        <select id="text-size-choice"><option value="normal">Normal</option><option value="large">Large</option><option value="larger">Extra large</option></select>
+      </label>
+      <label class="motion-setting"><input id="reduced-motion-choice" type="checkbox"> Reduce motion</label>
+      <p>Your choices are saved in this browser.</p>
+    </div>
+  </details>
+</header>
+<nav aria-label="Main navigation">
+  <a href="index.html">Home</a>
+  <a href="community.html">Community</a>
+  <a href="account.html">Account</a>
+  <a href="whats-new.html">What's New</a>
+  <a href="status.html">Status</a>
+  <a href="safety.html">Safety &amp; Reports</a>
+  <a href="privacy.html" aria-current="page">Privacy</a>
+</nav>
+<main>
+<section class="card">
+  <h2>♡ Privacy Center</h2>
+  <p>This page explains what Sparky's Space uses, what is visible to other members, and what controls are currently available. It is based on a review of the website source and database access rules; it is not a legal certification or a live browser cookie scan.</p>
+  <div class="privacy-section">
+    <h3>What the site stores</h3>
+    <ul>
+      <li><strong>Account:</strong> Supabase Auth manages your sign-in and account email. The browser stores the Supabase session so you can stay signed in.</li>
+      <li><strong>Profile:</strong> username, display name, bio, status, avatar/banner links, accent, privacy settings, and timestamps.</li>
+      <li><strong>Community safety:</strong> reports, appeals, moderation records, and limited security-event categories. Security events currently record event type, source category, and timestamp—not IP addresses.</li>
+      <li><strong>Browser preferences:</strong> theme, accent, text size, and reduced-motion choice are stored locally under four <code>sparky-*</code> keys.</li>
+    </ul>
+  </div>
+  <div class="privacy-section">
+    <h3>Who can see what</h3>
+    <ul>
+      <li>Private profile rows are readable by the account owner under database row-level security.</li>
+      <li>Only profiles explicitly published are copied into the public directory. Bio and status visibility are separate choices.</li>
+      <li>Members can view their own moderation records and submitted reports through the account's member-facing views.</li>
+      <li>Authorized staff roles can review reports, appeals, moderation records, and security events for community safety. The database enforces staff checks for these operations.</li>
+      <li>The current system does not record a complete audit trail of which staff member viewed each record.</li>
+    </ul>
+  </div>
+  <div class="privacy-section">
+    <h3>External services</h3>
+    <ul>
+      <li><strong>Supabase:</strong> authentication, database, and account session handling.</li>
+      <li><strong>Cloudflare Turnstile:</strong> bot checks on account and community report/appeal forms. Cloudflare may process browser/device signals and may use cookies as part of its service.</li>
+      <li><strong>jsDelivr:</strong> delivers the Supabase JavaScript library used by the site.</li>
+      <li>The reviewed first-party source does not include advertising analytics or an analytics tracker. External providers have their own privacy practices.</li>
+    </ul>
+    <p class="section-note">The site itself does not request your location. This source review found no first-party code that creates cookies, but a complete cookie inventory requires testing actual browser responses and third-party behavior; this page does not claim that no cookies are ever set.</p>
+  </div>
+  <div class="privacy-section">
+    <h3>Manage this browser's preferences</h3>
+    <p>Clear only the four appearance/accessibility preferences saved by this site. This does not sign you out or delete your account.</p>
+    <button type="button" class="secondary" id="clear-preferences-button">Clear saved appearance preferences</button>
+    <p class="auth-message" id="preferences-message" role="status" aria-live="polite"></p>
+  </div>
+  <div class="privacy-section">
+    <h3>Export or delete your account</h3>
+    <p>Sign in on the <a href="account.html">Account page</a> to export your profile, submitted reports, moderation records about your account, and appeals. The JSON export is generated locally in your browser and excludes passwords and session tokens.</p>
+    <p>You can also submit an account deletion request from the Account page. A request is queued for staff review; it does not immediately delete your account. The website currently has no automatic account-deletion or data-retention scheduler.</p>
+  </div>
+  <div class="privacy-section">
+    <h3>Retention and improvements still in progress</h3>
+    <p>Reports, appeals, moderation records, and security-event records do not yet have a published, automated retention schedule. They are not silently deleted by a timed cleanup job. A documented schedule and review process still need to be established before automatic cleanup is enabled.</p>
+    <p>Staff access is restricted by role-based database policies, but read-access auditing is not yet implemented. The site does not currently offer a full device/session history.</p>
+  </div>
+  <p class="section-note">Questions about a privacy request can be raised with the site owner through the existing community support process. Do not include passwords, authentication codes, or private contact details in a public report.</p>
+</section>
+</main>
+<footer>Made with ♡ by Sparky<p>Thanks for visiting! ^w^</p></footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="assets/config.js"></script>
+<script defer src="assets/app.js"></script>
+<script defer src="assets/theme.js"></script>
+</body>
+</html>
