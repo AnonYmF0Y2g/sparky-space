@@ -32,6 +32,10 @@
           <option value="orange">Orange</option><option value="red">Red</option>
         </select>
       </label>
+      <label for="text-size-choice">Text size
+        <select id="text-size-choice"><option value="normal">Normal</option><option value="large">Large</option><option value="larger">Extra large</option></select>
+      </label>
+      <label class="motion-setting"><input id="reduced-motion-choice" type="checkbox"> Reduce motion</label>
       <p>Your choices are saved in this browser.</p>
     </div>
   </details>
@@ -40,6 +44,8 @@
   <a href="index.html">Home</a>
   <a href="community.html">Community</a>
   <a href="account.html" aria-current="page">Account</a>
+  <a href="whats-new.html">What's New</a>
+  <a href="status.html">Status</a>
   <a href="safety.html">Safety &amp; Reports</a>
 </nav>
 <main>
@@ -68,13 +74,32 @@
     <p class="account-email" id="account-email">Your email address is private.</p>
     <div class="account-actions"><button type="button" class="secondary" id="signout-button">Sign out</button></div>
     <hr class="soft-rule">
+    <h3>♡ Account Security</h3>
+    <p class="section-note">This panel shows information about the current browser session, not a complete list of devices.</p>
+    <div class="security-session" id="security-session-info">Loading session information...</div>
+    <div class="account-actions">
+      <button type="button" class="secondary" id="password-reset-button">Email me a password reset link</button>
+      <button type="button" class="secondary" id="signout-others-button">Sign out other sessions</button>
+    </div>
+    <p class="auth-message" id="security-message" role="status" aria-live="polite"></p>
+    <hr class="soft-rule">
     <h3>♡ Edit your member profile</h3>
     <form class="profile-editor" id="profile-form">
       <label>Display name <input id="profile-display-name" maxlength="30" placeholder="How should members see you?"></label>
       <label>Status <input id="profile-status" maxlength="60" placeholder="A short status message"></label>
       <label>Bio <textarea id="profile-bio" maxlength="240" placeholder="A little about you (no private details)"></textarea></label>
+      <label>Avatar image URL <input id="profile-avatar-url" type="url" maxlength="2048" placeholder="https://..."></label>
+      <label>Banner image URL <input id="profile-banner-url" type="url" maxlength="2048" placeholder="https://..."></label>
+      <label>Profile accent <select id="profile-accent"><option value="pink">Pink</option><option value="purple">Purple</option><option value="blue">Blue</option><option value="cyan">Cyan</option><option value="teal">Teal</option><option value="green">Green</option><option value="orange">Orange</option><option value="red">Red</option></select></label>
+      <fieldset class="privacy-options"><legend>Profile privacy</legend>
+        <label><input id="profile-is-public" type="checkbox"> Show my profile in the public directory</label>
+        <label><input id="profile-show-bio" type="checkbox"> Show my bio publicly</label>
+        <label><input id="profile-show-status" type="checkbox"> Show my status publicly</label>
+        <p class="section-note">If your profile is hidden, it won't appear in the public directory. Your account and private email remain separate.</p>
+      </fieldset>
       <button type="submit" id="profile-save">Save profile</button>
     </form>
+    <p class="section-note">Only use image links you trust and have permission to share. Avoid personal photos or images containing private information.</p>
     <p class="auth-message" id="profile-message" role="status" aria-live="polite"></p>
   </div>
   <p class="auth-message" id="auth-message" role="status" aria-live="polite"></p>
