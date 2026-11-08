@@ -97,3 +97,6 @@ main { min-height:55vh; }
 .auth-form,.profile-editor,.report-form { max-width:620px; }
 .appeal-form { border-top:1px solid var(--border); padding-top:12px; }
 @media(max-width:700px) { nav { justify-content:flex-start; } .captcha-wrap { width:100%; overflow:hidden; } }
+
+/* Low-noise honeypot field: hidden from people and assistive technology. */
+.honeypot-field { position:absolute!important; left:-10000px!important; top:auto!important; width:1px!important; height:1px!important; overflow:hidden!important; }
