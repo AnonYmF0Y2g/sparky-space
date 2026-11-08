@@ -3,7 +3,7 @@
   const root = document.documentElement;
   const themeSelect = document.getElementById("theme-choice");
   const accentSelect = document.getElementById("accent-choice");
-  const allowedThemes = ["lavender","rose","midnight","emerald","amber","slate"];
+  const allowedThemes = ["lavender","rose","midnight","emerald","amber","slate","sakura","ocean","aurora","cherry","mocha"];
   const allowedAccents = ["pink","purple","blue","cyan","teal","green","orange","red"];
   const savedTheme = localStorage.getItem("sparky-theme");
   const savedAccent = localStorage.getItem("sparky-accent");
