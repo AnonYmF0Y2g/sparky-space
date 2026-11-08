@@ -70,9 +70,9 @@
       if (byId("profile-avatar-url")) byId("profile-avatar-url").value = data.avatar_url || "";
       if (byId("profile-banner-url")) byId("profile-banner-url").value = data.banner_url || "";
       if (byId("profile-accent")) byId("profile-accent").value = data.profile_accent || "pink";
-      if (byId("profile-is-public")) byId("profile-is-public").checked = data.is_public !== false;
-      if (byId("profile-show-bio")) byId("profile-show-bio").checked = data.show_bio !== false;
-      if (byId("profile-show-status")) byId("profile-show-status").checked = data.show_status !== false;
+      if (byId("profile-is-public")) byId("profile-is-public").checked = data.is_public === true;
+      if (byId("profile-show-bio")) byId("profile-show-bio").checked = data.show_bio === true;
+      if (byId("profile-show-status")) byId("profile-show-status").checked = data.show_status === true;
     } else setText("profile-message", "Your profile is still being prepared. Please refresh in a moment.");
   }
 
