@@ -52,15 +52,27 @@
   }
   setupCaptcha();
 
+  function safeImageUrl(value) {
+    if (!value) return "";
+    try { const url = new URL(value); return url.protocol === "https:" ? url.href : ""; }
+    catch { return ""; }
+  }
+
   async function loadOwnProfile(user) {
     if (!user || !byId("profile-form")) return;
     const { data, error } = await client.from("profiles")
-      .select("username, display_name, bio, status").eq("id", user.id).maybeSingle();
+      .select("username, display_name, bio, status, avatar_url, banner_url, profile_accent, is_public, show_bio, show_status").eq("id", user.id).maybeSingle();
     if (error) { setText("profile-message", "Couldn't load your profile: " + error.message); return; }
     if (data) {
       byId("profile-display-name").value = data.display_name || "";
       byId("profile-status").value = data.status || "";
       byId("profile-bio").value = data.bio || "";
+      if (byId("profile-avatar-url")) byId("profile-avatar-url").value = data.avatar_url || "";
+      if (byId("profile-banner-url")) byId("profile-banner-url").value = data.banner_url || "";
+      if (byId("profile-accent")) byId("profile-accent").value = data.profile_accent || "pink";
+      if (byId("profile-is-public")) byId("profile-is-public").checked = data.is_public !== false;
+      if (byId("profile-show-bio")) byId("profile-show-bio").checked = data.show_bio !== false;
+      if (byId("profile-show-status")) byId("profile-show-status").checked = data.show_status !== false;
     } else setText("profile-message", "Your profile is still being prepared. Please refresh in a moment.");
   }
 
@@ -68,21 +80,30 @@
     const directory = byId("member-directory");
     if (!directory) return;
     directory.textContent = "Loading members...";
-    const { data, error } = await client.from("profiles")
-      .select("username, display_name, bio, status, created_at")
-      .order("created_at", { ascending: true }).limit(100);
+    const { data, error } = await client.from("public_profiles")
+      .select("id, username, display_name, bio, status, avatar_url, banner_url, profile_accent, created_at")
+      .order("created_at", { ascending: false }).limit(100);
     if (error) { directory.textContent = "Member directory is unavailable: " + error.message; return; }
     if (!data || data.length === 0) { directory.textContent = "No member profiles yet. Be the first!"; return; }
     directory.replaceChildren();
     for (const member of data) {
       const card = document.createElement("article"); card.className = "member-card";
+      const accents = ["pink","purple","blue","cyan","teal","green","orange","red"];
+      const accentMap = {pink:"#f18abd",purple:"#c49aff",blue:"#80b8ff",cyan:"#69d5e8",teal:"#69d6c2",green:"#8bd88a",orange:"#f2ad70",red:"#f18c91"};
+      card.style.setProperty("--member-accent", accentMap[accents.includes(member.profile_accent) ? member.profile_accent : "pink"]);
+      const bannerUrl = safeImageUrl(member.banner_url);
+      if (bannerUrl) { const banner = document.createElement("img"); banner.className = "member-banner"; banner.src = bannerUrl; banner.alt = ""; banner.loading = "lazy"; card.append(banner); }
+      const content = document.createElement("div"); content.className = "member-card-content";
+      const avatarUrl = safeImageUrl(member.avatar_url);
+      if (avatarUrl) { const avatar = document.createElement("img"); avatar.className = "member-avatar"; avatar.src = avatarUrl; avatar.alt = ""; avatar.loading = "lazy"; content.append(avatar); }
       const name = document.createElement("strong"); name.textContent = member.display_name || member.username || "Member";
-      const username = document.createElement("p"); username.textContent = "@" + (member.username || "member");
-      const status = document.createElement("p"); status.textContent = member.status || "No status set";
-      const bio = document.createElement("p"); bio.textContent = member.bio || "This member hasn't added a bio yet.";
+      const username = document.createElement("p"); username.className = "member-meta"; username.textContent = "@" + (member.username || "member");
+      content.append(name, username);
+      if (member.status) { const status = document.createElement("p"); status.textContent = member.status; content.append(status); }
+      if (member.bio) { const bio = document.createElement("p"); bio.textContent = member.bio; content.append(bio); }
       const joined = document.createElement("p"); joined.className = "member-meta";
       joined.textContent = member.created_at ? "Joined " + new Date(member.created_at).toLocaleDateString() : "";
-      card.append(name, username, status, bio, joined); directory.append(card);
+      content.append(joined); card.append(content); directory.append(card);
     }
     setText("members-message", data.length === 100 ? "Showing the first 100 members." : data.length + " member profile(s).");
   }
@@ -92,10 +113,21 @@
     event.preventDefault();
     if (!activeUser) return;
     const save = byId("profile-save"); save.disabled = true; setText("profile-message", "Saving profile...");
+    let avatarUrl = "", bannerUrl = "";
+    avatarUrl = safeImageUrl(byId("profile-avatar-url").value.trim());
+    bannerUrl = safeImageUrl(byId("profile-banner-url").value.trim());
+    if (byId("profile-avatar-url").value.trim() && !avatarUrl) { save.disabled = false; setText("profile-message", "Avatar links must use HTTPS."); return; }
+    if (byId("profile-banner-url").value.trim() && !bannerUrl) { save.disabled = false; setText("profile-message", "Banner links must use HTTPS."); return; }
     const values = {
       display_name: byId("profile-display-name").value.trim(),
       status: byId("profile-status").value.trim(),
-      bio: byId("profile-bio").value.trim()
+      bio: byId("profile-bio").value.trim(),
+      avatar_url: avatarUrl || null,
+      banner_url: bannerUrl || null,
+      profile_accent: byId("profile-accent").value,
+      is_public: byId("profile-is-public").checked,
+      show_bio: byId("profile-show-bio").checked,
+      show_status: byId("profile-show-status").checked
     };
     const { error } = await client.from("profiles").update(values).eq("id", activeUser.id);
     save.disabled = false;
@@ -275,16 +307,83 @@
     setMode("signup");
   }
 
-  function refreshUserData(user) {
+  function renderSecuritySession(user, session) {
+    const panel = byId("security-session-info");
+    if (!panel) return;
+    panel.replaceChildren();
+    if (!user) { panel.textContent = "Sign in to view your session information."; return; }
+    const rows = [
+      ["Account created", user.created_at ? new Date(user.created_at).toLocaleString() : "Not available"],
+      ["Last sign-in", user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString() : "Not available"],
+      ["Current session expires", session?.expires_at ? new Date(session.expires_at * 1000).toLocaleString() : "Not available"]
+    ];
+    for (const [label, value] of rows) {
+      const line = document.createElement("p");
+      const strong = document.createElement("strong"); strong.textContent = label + ": ";
+      line.append(strong, document.createTextNode(value)); panel.append(line);
+    }
+    const note = document.createElement("p"); note.className = "section-note";
+    note.textContent = "For security, this page does not display access tokens or list other devices.";
+    panel.append(note);
+  }
+
+  function refreshUserData(user, session) {
     renderUser(user);
+    renderSecuritySession(user, session);
     if (user) loadOwnProfile(user);
     loadMyModeration(user);
     loadMyReports(user);
   }
   client.auth.getSession().then(({ data, error }) => {
     if (error) say(error.message);
-    refreshUserData(data?.session?.user || null);
+    refreshUserData(data?.session?.user || null, data?.session || null);
   });
-  client.auth.onAuthStateChange((_event, session) => refreshUserData(session?.user || null));
+  client.auth.onAuthStateChange((_event, session) => refreshUserData(session?.user || null, session || null));
+
+  byId("password-reset-button")?.addEventListener("click", async () => {
+    if (!activeUser?.email) return;
+    const button = byId("password-reset-button");
+    button.disabled = true; setText("security-message", "Requesting a password reset email...");
+    const { error } = await client.auth.resetPasswordForEmail(activeUser.email, {
+      redirectTo: new URL("account.html", window.location.href).href
+    });
+    setText("security-message", error ? "Couldn't send the reset email: " + error.message : "If the address is eligible, a password reset email has been sent.");
+    button.disabled = false;
+  });
+  byId("signout-others-button")?.addEventListener("click", async () => {
+    if (!activeUser || !window.confirm("Sign out all other sessions? This keeps this browser signed in.")) return;
+    const button = byId("signout-others-button");
+    button.disabled = true; setText("security-message", "Signing out other sessions...");
+    const { error } = await client.auth.signOut({ scope: "others" });
+    setText("security-message", error ? "Couldn't revoke other sessions: " + error.message : "Other refresh-token sessions have been signed out. Existing access tokens may remain valid until they expire.");
+    button.disabled = false;
+  });
+  byId("signout-button")?.addEventListener("click", async () => {
+    const { error } = await client.auth.signOut({ scope: "local" });
+    say(error ? error.message : "You have been signed out of this browser.");
+  });
+
+  async function loadStatusCenter() {
+    const root = byId("status-checks");
+    if (!root) return;
+    const setStatus = (id, state, detail) => {
+      const item = byId(id); if (!item) return;
+      const status = item.querySelector(".status-state");
+      const description = item.querySelector(".status-detail");
+      status.textContent = state;
+      status.className = "status-state " + (state === "Operational" ? "" : "issue");
+      description.textContent = detail;
+    };
+    const assetPromise = fetch("assets/theme.css", { method:"HEAD", cache:"no-store" }).then(response => response.ok).catch(() => false);
+    const databasePromise = client.from("public_profiles").select("id").limit(1).then(({error}) => !error);
+    const authPromise = fetch(SUPABASE_URL + "/auth/v1/health", { headers:{apikey:SUPABASE_PUBLISHABLE_KEY}, cache:"no-store" }).then(response => response.ok).catch(() => false);
+    const [assetOk,databaseOk,authOk] = await Promise.all([assetPromise,databasePromise,authPromise]);
+    setStatus("status-website",assetOk ? "Operational" : "Issue detected",assetOk ? "The site's stylesheet is reachable." : "The stylesheet could not be reached from this browser.");
+    setStatus("status-database",databaseOk ? "Operational" : "Issue detected",databaseOk ? "The public directory API responded successfully." : "The directory API did not respond successfully.");
+    setStatus("status-auth",authOk ? "Operational" : "Issue detected",authOk ? "The authentication health endpoint responded." : "The authentication health endpoint could not be confirmed.");
+    setText("status-last-checked","Last checked: " + new Date().toLocaleString());
+  }
+  byId("status-refresh")?.addEventListener("click", loadStatusCenter);
+  loadStatusCenter();
   loadMembers();
 })();
