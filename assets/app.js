@@ -589,6 +589,8 @@
 
   function refreshUserData(user, session) {
     renderUser(user);
+    const uploadNote = byId("image-upload-note");
+    if (uploadNote) uploadNote.textContent = user ? "Signed in. Submissions are reviewed before they appear publicly." : "Sign in to your account before submitting an image.";
     loadStaffDeletionQueue(user);
     loadStaffImageQueue(user);
     loadCommunityPosts(user);
