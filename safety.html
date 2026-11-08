@@ -48,6 +48,7 @@
   <h2>♡ Safety &amp; Reports</h2>
   <p class="section-note">Signed-in members can report a public username or raise a general community concern. Please don't include private information, passwords, addresses, or contact details.</p>
   <form class="report-form" id="report-form">
+    <label class="honeypot-field" aria-hidden="true">Website<input id="report-website" name="website" type="text" autocomplete="off" tabindex="-1"></label>
     <label>Member username (optional)<input id="report-username" maxlength="20" placeholder="Username to report"></label>
     <label>Category
       <select id="report-category" required>
