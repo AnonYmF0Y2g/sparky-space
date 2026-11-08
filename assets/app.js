@@ -432,6 +432,14 @@
     say(error ? error.message : "You have been signed out of this browser.");
   });
 
+  byId("clear-preferences-button")?.addEventListener("click", () => {
+    for (const key of ["sparky-theme", "sparky-accent", "sparky-text-size", "sparky-reduced-motion"]) {
+      localStorage.removeItem(key);
+    }
+    setText("preferences-message", "Saved appearance preferences cleared. Reloading with the default settings...");
+    window.location.reload();
+  });
+
   async function loadStatusCenter() {
     const root = byId("status-checks");
     if (!root) return;
