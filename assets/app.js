@@ -330,13 +330,14 @@
     button.disabled = true;
     setText("privacy-data-message", "Preparing your personal data export...");
     try {
-      const [profileResult, reportsResult, moderationResult, appealsResult] = await Promise.all([
+      const [profileResult, reportsResult, moderationResult, appealsResult, deletionResult] = await Promise.all([
         client.from("profiles").select("username, display_name, bio, status, avatar_url, banner_url, profile_accent, is_public, show_bio, show_status, created_at, updated_at").eq("id", activeUser.id).maybeSingle(),
         client.rpc("get_my_reports"),
         client.from("moderation_actions").select("action_type, reason, created_at, expires_at").eq("target_user_id", activeUser.id).order("created_at", { ascending: false }),
-        client.from("appeals").select("action_id, message, status, staff_response, created_at").eq("appellant_id", activeUser.id).order("created_at", { ascending: false })
+        client.from("appeals").select("action_id, message, status, staff_response, created_at").eq("appellant_id", activeUser.id).order("created_at", { ascending: false }),
+        client.from("account_deletion_requests").select("status, requested_at, resolved_at").eq("user_id", activeUser.id).order("requested_at", { ascending: false })
       ]);
-      const failure = [profileResult, reportsResult, moderationResult, appealsResult].find(result => result.error);
+      const failure = [profileResult, reportsResult, moderationResult, appealsResult, deletionResult].find(result => result.error);
       if (failure) throw failure.error;
       const payload = {
         exported_at: new Date().toISOString(),
@@ -351,6 +352,7 @@
         reports_submitted: reportsResult.data || [],
         moderation_records_about_this_account: moderationResult.data || [],
         appeals_submitted: appealsResult.data || [],
+        account_deletion_requests: deletionResult.data || [],
         notes: [
           "This export contains data available to this signed-in account through the website.",
           "It does not contain passwords, access tokens, refresh tokens, staff-only internal notes, or other members' information."
