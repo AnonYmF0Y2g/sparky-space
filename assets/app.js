@@ -324,6 +324,78 @@
     panel.append(note);
   }
 
+  async function exportMyData() {
+    if (!activeUser) return;
+    const button = byId("export-data-button");
+    button.disabled = true;
+    setText("privacy-data-message", "Preparing your personal data export...");
+    try {
+      const [profileResult, reportsResult, moderationResult, appealsResult] = await Promise.all([
+        client.from("profiles").select("username, display_name, bio, status, avatar_url, banner_url, profile_accent, is_public, show_bio, show_status, created_at, updated_at").eq("id", activeUser.id).maybeSingle(),
+        client.rpc("get_my_reports"),
+        client.from("moderation_actions").select("action_type, reason, created_at, expires_at").eq("target_user_id", activeUser.id).order("created_at", { ascending: false }),
+        client.from("appeals").select("action_id, message, status, staff_response, created_at").eq("appellant_id", activeUser.id).order("created_at", { ascending: false })
+      ]);
+      const failure = [profileResult, reportsResult, moderationResult, appealsResult].find(result => result.error);
+      if (failure) throw failure.error;
+      const payload = {
+        exported_at: new Date().toISOString(),
+        account: {
+          id: activeUser.id,
+          email: activeUser.email || null,
+          created_at: activeUser.created_at || null,
+          last_sign_in_at: activeUser.last_sign_in_at || null,
+          username_metadata: activeUser.user_metadata?.username || null
+        },
+        profile: profileResult.data || null,
+        reports_submitted: reportsResult.data || [],
+        moderation_records_about_this_account: moderationResult.data || [],
+        appeals_submitted: appealsResult.data || [],
+        notes: [
+          "This export contains data available to this signed-in account through the website.",
+          "It does not contain passwords, access tokens, refresh tokens, staff-only internal notes, or other members' information."
+        ]
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "sparkys-space-personal-data.json";
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      setText("privacy-data-message", "Your personal data export has been prepared in this browser.");
+    } catch (error) {
+      setText("privacy-data-message", "Couldn't prepare the export: " + (error.message || "Please try again."));
+    } finally { button.disabled = false; }
+  }
+
+  byId("export-data-button")?.addEventListener("click", exportMyData);
+  byId("request-deletion-button")?.addEventListener("click", async () => {
+    if (!activeUser) return;
+    const button = byId("request-deletion-button");
+    const status = byId("deletion-request-message");
+    if (!window.confirm("Submit an account deletion request? This will NOT delete your account immediately. Staff will review the request before any deletion takes place.")) return;
+    button.disabled = true;
+    status.textContent = "Checking for an existing request...";
+    try {
+      const { data: existing, error: lookupError } = await client.from("account_deletion_requests")
+        .select("id, status, requested_at").eq("user_id", activeUser.id)
+        .in("status", ["pending", "reviewing"]).limit(1).maybeSingle();
+      if (lookupError) throw lookupError;
+      if (existing) {
+        status.textContent = "You already have a deletion request " + existing.status + " since " + new Date(existing.requested_at).toLocaleString() + ".";
+      } else {
+        const { error } = await client.from("account_deletion_requests").insert({ user_id: activeUser.id });
+        if (error) throw error;
+        status.textContent = "Your request has been recorded for staff review. Your account and data have NOT been deleted.";
+      }
+    } catch (error) {
+      status.textContent = "Couldn't submit the request: " + (error.message || "Please contact site staff.");
+    } finally { button.disabled = false; }
+  });
+
   function refreshUserData(user, session) {
     renderUser(user);
     renderSecuritySession(user, session);
