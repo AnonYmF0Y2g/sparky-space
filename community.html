@@ -32,6 +32,10 @@
           <option value="orange">Orange</option><option value="red">Red</option>
         </select>
       </label>
+      <label for="text-size-choice">Text size
+        <select id="text-size-choice"><option value="normal">Normal</option><option value="large">Large</option><option value="larger">Extra large</option></select>
+      </label>
+      <label class="motion-setting"><input id="reduced-motion-choice" type="checkbox"> Reduce motion</label>
       <p>Your choices are saved in this browser.</p>
     </div>
   </details>
@@ -40,13 +44,15 @@
   <a href="index.html">Home</a>
   <a href="community.html" aria-current="page">Community</a>
   <a href="account.html">Account</a>
+  <a href="whats-new.html">What's New</a>
+  <a href="status.html">Status</a>
   <a href="safety.html">Safety &amp; Reports</a>
 </nav>
 <main>
 
 <section class="card">
   <h2>♡ Community Members</h2>
-  <p class="section-note">Public member profiles. Email addresses and login details are never shown here.</p>
+  <p class="section-note">Public member profiles. Members control whether their profiles, bios, and statuses appear here. Email addresses and login details are never shown.</p>
   <div class="member-grid" id="member-directory"><p>Loading members...</p></div>
   <p class="section-note" id="members-message" role="status" aria-live="polite"></p>
 </section>
