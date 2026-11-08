@@ -557,7 +557,7 @@
     if (roleError || !role) { root.textContent = "This page is restricted to authorized staff."; return; }
     const { data, error } = await client.from("community_posts")
       .select("id,user_id,title,caption,tags,storage_path,status,created_at")
-      .in("status", ["pending","approved","rejected"]).order("created_at", { ascending: true }).limit(100);
+      .in("status", ["pending","approved","rejected","removed"]).order("created_at", { ascending: true }).limit(100);
     if (error) { root.textContent = "Couldn't load image submissions: " + error.message; return; }
     if (!data?.length) { root.textContent = "There are no image submissions to review."; return; }
     for (const post of data) {
