@@ -256,7 +256,7 @@
           });
           if (result.error) throw result.error;
           if (result.data.session) say("Account created! You're signed in.");
-          else { say("Account created. Check your email for the confirmation link, then come back here to sign in."); setMode("login"); }
+          else { setMode("login"); say("Account created. Check your email for the confirmation link, then come back here to sign in."); }
         } else {
           result = await client.auth.signInWithPassword({ email, password, options: { captchaToken: token } });
           if (result.error) throw result.error;
