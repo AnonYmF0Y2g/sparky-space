@@ -100,3 +100,33 @@ main { min-height:55vh; }
 
 /* Low-noise honeypot field: hidden from people and assistive technology. */
 .honeypot-field { position:absolute!important; left:-10000px!important; top:auto!important; width:1px!important; height:1px!important; overflow:hidden!important; }
+
+
+/* Profile personalization, service status, changelog and accessibility */
+:root[data-text-size="large"] { font-size:18px; }
+:root[data-text-size="larger"] { font-size:20px; }
+:root.reduce-motion *, :root.reduce-motion *::before, :root.reduce-motion *::after { scroll-behavior:auto!important; animation:none!important; transition:none!important; }
+.motion-setting { display:flex!important; align-items:center; gap:9px!important; }
+.motion-setting input,.privacy-options input { width:auto; accent-color:var(--accent); }
+.privacy-options { display:grid; gap:10px; border:1px solid var(--border); border-radius:14px; padding:14px; margin:12px 0; }
+.privacy-options legend { color:var(--accent); font-weight:700; padding:0 6px; }
+.privacy-options label { display:flex; align-items:center; gap:9px; }
+.profile-editor input[type="url"],.profile-editor select { width:100%; box-sizing:border-box; padding:11px; border-radius:10px; background:var(--page); color:var(--text); border:1px solid var(--border); }
+.member-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
+.member-card { overflow:hidden; border-radius:16px; padding:0!important; }
+.member-banner { width:100%; height:86px; object-fit:cover; display:block; background:var(--surface-raised); }
+.member-card-content { padding:14px; }
+.member-avatar { width:58px; height:58px; border-radius:50%; object-fit:cover; border:3px solid var(--member-accent,var(--accent)); background:var(--surface-raised); margin-top:-42px; position:relative; }
+.member-card strong { color:var(--member-accent,var(--accent))!important; display:block; margin-top:7px; }
+.member-card p { overflow-wrap:anywhere; }
+.member-meta { font-size:12px; }
+.security-session,.status-item,.changelog-entry { background:var(--surface-raised); border:1px solid var(--border); border-radius:14px; padding:14px; margin:10px 0; }
+.status-list { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+.status-item { margin:0; }
+.status-state { font-weight:700; color:var(--success); }
+.status-state.issue { color:#f2ad70; }
+.status-state.checking { color:var(--muted); }
+.status-updated { color:var(--muted); font-size:13px; }
+.changelog-entry h3 { margin-top:0; }
+.changelog-tag { display:inline-block; border:1px solid var(--border); border-radius:999px; padding:3px 9px; color:var(--accent); font-size:12px; margin-right:6px; }
+@media(max-width:700px) { .member-grid { grid-template-columns:1fr; } }
