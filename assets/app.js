@@ -398,8 +398,65 @@
     } finally { button.disabled = false; }
   });
 
+  async function loadStaffDeletionQueue(user) {
+    const root = byId("staff-deletion-requests");
+    if (!root) return;
+    root.replaceChildren();
+    if (!user) { root.textContent = "Sign in with an authorized staff account to review requests."; return; }
+    const { data: role, error: roleError } = await client.from("staff_roles")
+      .select("role").eq("user_id", user.id).maybeSingle();
+    if (roleError || !role) { root.textContent = "This page is restricted to authorized staff."; return; }
+    const { data, error } = await client.from("account_deletion_requests")
+      .select("id, user_id, status, requested_at, resolved_at")
+      .order("requested_at", { ascending: false }).limit(100);
+    if (error) { root.textContent = "Couldn't load the request queue: " + error.message; return; }
+    if (!data?.length) { root.textContent = "There are no account deletion requests."; return; }
+    for (const request of data) {
+      const card = document.createElement("article");
+      card.className = "privacy-section";
+      const heading = document.createElement("h3");
+      heading.textContent = "Request · " + request.status;
+      const details = document.createElement("p");
+      details.textContent = "Account ID: " + request.user_id + " · Submitted: " + new Date(request.requested_at).toLocaleString();
+      card.append(heading, details);
+      const actions = document.createElement("div");
+      actions.className = "privacy-actions";
+      if (request.status === "pending") {
+        const review = document.createElement("button");
+        review.type = "button";
+        review.textContent = "Mark as reviewing";
+        review.addEventListener("click", async () => {
+          review.disabled = true;
+          const { error: updateError } = await client.from("account_deletion_requests")
+            .update({ status: "reviewing", resolved_at: null }).eq("id", request.id);
+          if (updateError) { review.disabled = false; details.textContent = "Update failed: " + updateError.message; }
+          else loadStaffDeletionQueue(user);
+        });
+        actions.append(review);
+      }
+      if (request.status === "pending" || request.status === "reviewing") {
+        const cancel = document.createElement("button");
+        cancel.type = "button";
+        cancel.className = "secondary";
+        cancel.textContent = "Cancel request";
+        cancel.addEventListener("click", async () => {
+          if (!window.confirm("Mark this deletion request as cancelled? This does not delete the account.")) return;
+          cancel.disabled = true;
+          const { error: updateError } = await client.from("account_deletion_requests")
+            .update({ status: "cancelled", resolved_at: new Date().toISOString() }).eq("id", request.id);
+          if (updateError) { cancel.disabled = false; details.textContent = "Update failed: " + updateError.message; }
+          else loadStaffDeletionQueue(user);
+        });
+        actions.append(cancel);
+      }
+      card.append(actions);
+      root.append(card);
+    }
+  }
+
   function refreshUserData(user, session) {
     renderUser(user);
+    loadStaffDeletionQueue(user);
     renderSecuritySession(user, session);
     if (user) loadOwnProfile(user);
     loadMyModeration(user);
