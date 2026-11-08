@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d18">
+<title>Image Board · Sparky's Space ♡</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="site-header">
+  <h1>♡ Community Image Board</h1>
+  <p>Share your art, characters and creative projects :3</p>
+  <details class="appearance-menu">
+    <summary aria-label="Open appearance settings">Appearance ⚙</summary>
+    <div class="appearance-panel">
+      <label for="theme-choice">Theme<select id="theme-choice"><option value="lavender">Lavender Night</option><option value="rose">Rose Quartz</option><option value="midnight">Midnight</option><option value="emerald">Emerald</option><option value="amber">Amber</option><option value="slate">Slate</option><option value="sakura">Sakura Bloom</option><option value="ocean">Ocean Depths</option><option value="aurora">Aurora Glow</option><option value="cherry">Cherry Cola</option><option value="mocha">Mocha</option></select></label>
+      <label for="accent-choice">Accent color<select id="accent-choice"><option value="pink">Pink</option><option value="purple">Purple</option><option value="blue">Blue</option><option value="cyan">Cyan</option><option value="teal">Teal</option><option value="green">Green</option><option value="orange">Orange</option><option value="red">Red</option></select></label>
+      <label for="text-size-choice">Text size<select id="text-size-choice"><option value="normal">Normal</option><option value="large">Large</option><option value="larger">Extra large</option></select></label>
+      <label class="motion-setting"><input id="reduced-motion-choice" type="checkbox"> Reduce motion</label>
+      <p>Your choices are saved in this browser.</p>
+    </div>
+  </details>
+</header>
+<nav aria-label="Main navigation">
+  <a href="index.html">Home</a><a href="community.html">Community</a><a href="image-board.html" aria-current="page">Image Board</a><a href="community-rules.html">Community Rules</a><a href="account.html">Account</a><a href="whats-new.html">What's New</a><a href="status.html">Status</a><a href="safety.html">Safety &amp; Reports</a><a href="privacy.html">Privacy</a>
+</nav>
+<main>
+<section class="card">
+  <h2>♡ Submit an image</h2>
+  <p class="section-note">Sign in to submit. Images are stored privately and do not appear publicly until a moderator approves them. JPG, PNG and WebP only · 5 MB maximum · up to five submissions per 24 hours.</p>
+  <p id="image-upload-note" class="section-note">You need an account to submit an image.</p>
+  <form id="image-upload-form" class="image-upload-form">
+    <label for="image-upload-title">Title</label>
+    <input id="image-upload-title" maxlength="80" minlength="3" required placeholder="Give your artwork a title">
+    <label for="image-upload-caption">Caption (optional)</label>
+    <textarea id="image-upload-caption" maxlength="500" rows="3" placeholder="A little context about your image"></textarea>
+    <label for="image-upload-tags">Tags (optional, comma-separated)</label>
+    <input id="image-upload-tags" maxlength="180" placeholder="protogen, digital-art, drawing">
+    <label for="image-upload-file">Image file</label>
+    <input id="image-upload-file" type="file" accept="image/jpeg,image/png,image/webp" required>
+    <label class="rules-accept"><input id="image-rules-accepted" type="checkbox" required> I have read and agree to the <a href="community-rules.html">Community Rules</a>.</label>
+    <div class="captcha-wrap"><div id="community-captcha"></div><p id="community-captcha-note" class="captcha-note">Complete the verification check before submitting.</p></div>
+    <button id="image-upload-submit" type="submit">Submit for review</button>
+    <p id="image-upload-message" role="status" aria-live="polite"></p>
+  </form>
+</section>
+<section class="card">
+  <h2>♡ Community gallery</h2>
+  <p class="section-note">Only approved images are shown publicly. Please report anything that breaks the rules.</p>
+  <div id="image-board-grid" class="image-board-grid"><p>Loading the community gallery...</p></div>
+</section>
+</main>
+<footer>Made with ♡ by Sparky<p>Thanks for sharing your creativity! ^w^</p></footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
+<script defer src="assets/config.js"></script>
+<script defer src="assets/app.js"></script>
+<script defer src="assets/theme.js"></script>
+</body>
+</html>
