@@ -301,9 +301,6 @@
       } catch (error) { say(error.message || "Something went wrong. Please try again."); }
       finally { submitButton.disabled = false; resetCaptcha(authWidget); }
     });
-    byId("signout-button").addEventListener("click", async () => {
-      const { error } = await client.auth.signOut(); say(error ? error.message : "You have been signed out.");
-    });
     setMode("signup");
   }
 
