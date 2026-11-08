@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d18">
+<title>Staff Image Review · Sparky's Space</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="site-header"><h1>♡ Staff Image Review</h1><p>Private moderation queue</p></header>
+<nav aria-label="Staff navigation"><a href="staff-privacy.html">Privacy Requests</a><a href="staff-image-review.html" aria-current="page">Image Review</a><a href="index.html">Public Site</a></nav>
+<main>
+<section class="card">
+  <h2>Image submissions</h2>
+  <p class="section-note">This page is not linked from public navigation. Database row-level security enforces staff access; hiding the URL is not a security control.</p>
+  <div id="staff-image-queue">Checking staff access...</div>
+</section>
+</main>
+<footer>Staff tools · Sparky's Space</footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="assets/config.js"></script>
+<script defer src="assets/app.js"></script>
+<script defer src="assets/theme.js"></script>
+</body>
+</html>
