@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d18">
+<title>Staff Privacy Queue · Sparky's Space</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="site-header">
+  <h1>♡ Sparky's Space · Staff</h1>
+  <p>Privacy request review</p>
+  <details class="appearance-menu">
+    <summary aria-label="Open appearance settings">Appearance ⚙</summary>
+    <div class="appearance-panel">
+      <label for="theme-choice">Theme
+        <select id="theme-choice"><option value="lavender">Lavender Night</option><option value="rose">Rose Quartz</option><option value="midnight">Midnight</option><option value="emerald">Emerald</option><option value="amber">Amber</option><option value="slate">Slate</option><option value="sakura">Sakura Bloom</option><option value="ocean">Ocean Depths</option><option value="aurora">Aurora Glow</option><option value="cherry">Cherry Cola</option><option value="mocha">Mocha</option></select>
+      </label>
+      <label for="accent-choice">Accent color
+        <select id="accent-choice"><option value="pink">Pink</option><option value="purple">Purple</option><option value="blue">Blue</option><option value="cyan">Cyan</option><option value="teal">Teal</option><option value="green">Green</option><option value="orange">Orange</option><option value="red">Red</option></select>
+      </label>
+      <label for="text-size-choice">Text size
+        <select id="text-size-choice"><option value="normal">Normal</option><option value="large">Large</option><option value="larger">Extra large</option></select>
+      </label>
+      <label class="motion-setting"><input id="reduced-motion-choice" type="checkbox"> Reduce motion</label>
+      <p>Your choices are saved in this browser.</p>
+    </div>
+  </details>
+</header>
+<nav aria-label="Staff navigation"><a href="account.html">Account</a><a href="privacy.html">Privacy Center</a></nav>
+<main>
+<section class="card">
+  <h2>Account deletion requests</h2>
+  <p class="section-note">This page is not linked in the public navigation. Database row-level security and staff-role checks protect the queue; the client-side check is only a convenience, not the security boundary.</p>
+  <p class="section-note">Marking a request as reviewing or cancelled does not delete an account. Actual deletion must be performed through the approved Auth administration process after checking outstanding safety, moderation, and legal retention requirements.</p>
+  <div id="staff-deletion-requests">Checking staff access...</div>
+</section>
+</main>
+<footer>Staff tools · Sparky's Space</footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="assets/config.js"></script>
+<script defer src="assets/app.js"></script>
+<script defer src="assets/theme.js"></script>
+</body>
+</html>
