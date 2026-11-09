@@ -208,3 +208,8 @@ main { min-height:55vh; }
 .public-profile-section{padding:14px 0;border-top:1px solid var(--border);margin-top:16px}
 .public-profile-section h3{margin:0 0 8px}
 @media(max-width:700px){.public-profile-banner{width:calc(100% + 38px);margin:-19px -19px 14px;height:135px}}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.actions button{font:inherit;font-weight:700;border:0;border-radius:999px;padding:10px 16px;cursor:pointer;background:var(--accent);color:#fff}
+.actions button.secondary{background:var(--surface-raised);color:var(--text);border:1px solid var(--border)}
+.actions button:disabled{opacity:.55;cursor:not-allowed}
