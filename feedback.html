@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d18">
+<title>Community Feedback · Sparky's Space ♡</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="site-header"><h1>♡ Community Feedback</h1><p>Help shape Sparky's Space :3</p></header>
+<nav aria-label="Main navigation">
+<a href="index.html">Home</a><a href="community.html">Community</a><a href="community-hub.html">Community Hub</a><a href="image-board.html">Image Board</a><a href="guides.html">Tech Guides</a><a href="privacy.html">Privacy</a><a href="privacy-tests.html">Privacy Tests</a><a href="feedback.html" aria-current="page">Feedback</a><a href="account.html">Account</a>
+</nav>
+<main>
+<section class="card">
+<h2>♡ Suggest an improvement</h2>
+<p>Members, staff, and guests can suggest reasonable improvements, request guides, report bugs, or share accessibility ideas. You do not need an account.</p>
+<p class="section-note">Please do not include passwords, login codes, email addresses, phone numbers, home addresses, or other sensitive information. Feedback is visible to authorized staff for review. We do not ask for your email address.</p>
+<form id="feedback-form" class="feedback-form">
+<label>What is this about?
+<select id="feedback-category" required>
+<option value="feature_request">Feature suggestion</option>
+<option value="guide_request">Request a tech guide</option>
+<option value="bug_report">Website bug</option>
+<option value="accessibility">Accessibility improvement</option>
+<option value="other">Something else</option>
+</select></label>
+<label>Short title
+<input id="feedback-title" minlength="4" maxlength="100" required placeholder="A clear summary"></label>
+<label>Your suggestion or explanation
+<textarea id="feedback-message" minlength="20" maxlength="3000" rows="7" required placeholder="What would you like to see, and why would it be useful?"></textarea></label>
+<label class="honeypot-field" aria-hidden="true">Website<input id="feedback-website" type="text" autocomplete="off" tabindex="-1"></label>
+<p class="section-note" id="feedback-identity">You can submit as a guest. If you are signed in, your account will be associated with the feedback so staff can understand whether it came from a member or staff account.</p>
+<button id="feedback-submit" type="submit">Send feedback</button>
+<p id="feedback-status" class="auth-message" role="status" aria-live="polite"></p>
+</form>
+</section>
+<section class="card">
+<h2>What happens next?</h2>
+<ul>
+<li>Staff review suggestions and group similar requests.</li>
+<li>Possible statuses include new, reviewing, planned, declined, and completed.</li>
+<li>Submitting feedback does not guarantee that a feature will be added.</li>
+<li>Guest submissions are rate-limited to help prevent spam. Signed-in accounts have a separate hourly limit.</li>
+</ul>
+</section>
+</main>
+<footer>Made with ♡ by Sparky<p>Thanks for helping improve the community! ^w^</p></footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="assets/feedback.js"></script>
+<script defer src="assets/theme.js"></script>
+</body>
+</html>
