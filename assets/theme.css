@@ -244,3 +244,22 @@ main { min-height:55vh; }
 .support-message small{display:block;color:var(--muted)}
 .support-link{display:inline-flex;padding:10px 15px;border-radius:999px;background:var(--accent);color:white;text-decoration:none;font-weight:700}
 @media(max-width:760px){.support-columns{grid-template-columns:1fr}.support-message{max-width:100%}}
+
+/* Compact, stable site navigation */
+html{scroll-behavior:auto;scroll-padding-top:76px}
+body>nav{position:sticky;top:0;display:flex;flex-wrap:nowrap;justify-content:flex-start;align-items:center;gap:6px;padding:7px 12px!important;min-height:48px;max-height:58px;overflow-x:auto;overflow-y:hidden;white-space:nowrap;overscroll-behavior-x:contain;scrollbar-width:thin;z-index:100}
+body>nav a{flex:0 0 auto;padding:8px 11px;font-size:13px}
+body>nav::-webkit-scrollbar{height:4px}
+body>nav::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
+.guide-directory{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px;margin:18px 0}
+.guide-category{display:flex;flex-direction:column;gap:9px;min-height:190px;padding:22px;border:1px solid var(--border);border-radius:18px;background:var(--surface);color:var(--text);text-decoration:none;transition:border-color .16s,background .16s}
+.guide-category:hover,.guide-category:focus-visible{border-color:var(--accent);background:var(--surface-raised);outline:2px solid transparent}
+.guide-category h2{font-size:1.25rem;margin:0}
+.guide-category p{margin:0;color:var(--muted);line-height:1.6}
+.guide-kicker{font-size:.72rem;letter-spacing:.12em;font-weight:800;color:var(--accent)}
+.guide-open{margin-top:auto;padding-top:12px;color:var(--accent);font-weight:750}
+.guide-back{margin:14px 0}
+.guide-back a{color:var(--accent);font-weight:700}
+.guide-welcome p,.guide-help p{max-width:70ch;line-height:1.65}
+.guide-help .actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+@media(max-width:600px){body>nav{justify-content:flex-start;padding-inline:9px!important}body>nav a{padding:8px 10px;font-size:12px}.guide-category{min-height:0;padding:18px}}
