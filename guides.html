@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d18">
+<title>Tech Guides · Sparky's Space ♡</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="site-header"><h1>♡ Tech Guides Library</h1><p>Practical, careful guides for curious tech nerds ^w^</p></header>
+<nav aria-label="Main navigation">
+<a href="index.html">Home</a><a href="community.html">Community</a><a href="community-hub.html">Community Hub</a><a href="image-board.html">Image Board</a><a href="guides.html" aria-current="page">Tech Guides</a><a href="privacy.html">Privacy</a><a href="privacy-tests.html">Privacy Tests</a><a href="feedback.html">Feedback</a><a href="account.html">Account</a>
+</nav>
+<main>
+<section class="card"><h2>Start here: privacy foundations</h2><p>These guides focus on personal safety, informed choices, and defensive privacy. No single app, VPN, browser, or setting makes someone completely anonymous or untraceable. Start by deciding what information you want to protect and from whom.</p>
+<div class="quick-links">
+<a class="quick-link" href="#dns"><strong>DNS &amp; encrypted DNS</strong><span>Resolvers, DoH, DoT, and what encryption does.</span></a>
+<a class="quick-link" href="#vpn"><strong>VPN basics</strong><span>What a VPN protects, what it cannot hide, and setup checks.</span></a>
+<a class="quick-link" href="#tor"><strong>Tor Browser</strong><span>Official downloads, safe defaults, and limitations.</span></a>
+<a class="quick-link" href="#opsec"><strong>Personal OPSEC</strong><span>Threat modeling, account separation, and data minimization.</span></a>
+<a class="quick-link" href="#browser"><strong>Browser privacy</strong><span>Permissions, tracking protection, updates, and fingerprinting.</span></a>
+<a class="quick-link" href="#linux"><strong>Linux &amp; networking</strong><span>System updates, firewall concepts, and network basics.</span></a>
+</div></section>
+<section class="card" id="dns">
+<h2>1. DNS and encrypted DNS</h2>
+<p>DNS translates a domain name into the network address a device needs to connect. Traditional DNS is often unencrypted between your device and resolver. DNS over HTTPS (DoH) and DNS over TLS (DoT) encrypt that connection to the resolver, but the resolver itself can still process the queries.</p>
+<h3>Safe setup checklist</h3>
+<ol><li>Choose a resolver whose privacy policy and operator you understand.</li><li>Use your browser or operating system's built-in encrypted-DNS settings where available.</li><li>Avoid installing random DNS certificates or configuration profiles.</li><li>Check that your browser is actually using the intended resolver after setup.</li><li>Remember that managed networks may enforce their own DNS settings.</li></ol>
+<p><a href="https://developers.cloudflare.com/1.1.1.1/encryption/dns-over-https/encrypted-dns-browsers/" target="_blank" rel="noopener noreferrer">Cloudflare: configure DoH in common browsers</a> · <a href="https://developers.cloudflare.com/1.1.1.1/setup/linux/" target="_blank" rel="noopener noreferrer">Cloudflare: Linux setup guide</a> · <a href="https://1.1.1.1/help" target="_blank" rel="noopener noreferrer">Cloudflare resolver check</a></p>
+<p class="section-note">Encrypted DNS protects DNS traffic on the path to the resolver. It does not hide every website connection or make browsing anonymous.</p>
+</section>
+<section class="card" id="vpn">
+<h2>2. VPNs: setup and limitations</h2>
+<p>A VPN creates an encrypted tunnel between your device and a VPN provider. Websites generally see the VPN server's public IP instead of your network's public IP. Your VPN provider becomes an important party you must trust.</p>
+<h3>Before connecting</h3>
+<ul><li>Download the official app from the provider's official website or your device's trusted app store.</li><li>Keep the app updated and use its default secure protocol unless you have a clear reason to change it.</li><li>Learn what its kill switch and DNS protection settings do; test them using the provider's documentation.</li><li>Check whether you are using a full-device VPN app or only a browser extension. They protect different traffic.</li><li>Do not assume a VPN hides your identity when you sign in to an account or share identifying details.</li></ul>
+<p><a href="https://protonvpn.com/support/protonvpn-setup-guide" target="_blank" rel="noopener noreferrer">Proton VPN: official setup guide</a> · <a href="https://protonvpn.com/support" target="_blank" rel="noopener noreferrer">Proton VPN support library</a></p>
+</section>
+<section class="card" id="tor">
+<h2>3. Tor Browser</h2>
+<p>Tor Browser routes browsing through the Tor network and includes privacy protections intended to reduce tracking and browser fingerprinting. It is not a magic invisibility cloak, and it does not protect every app on a device.</p>
+<h3>Safer use principles</h3>
+<ul><li>Get Tor Browser only from the official Tor Project website and keep it updated.</li><li>Keep its built-in privacy settings and avoid adding extensions that make your browser more unique.</li><li>Use HTTPS websites and be cautious about opening downloaded documents in external applications.</li><li>Signing in to a personal account can identify you to that service even when using Tor.</li><li>Understand that websites may block Tor connections and that connection speed can vary.</li></ul>
+<p><a href="https://support.torproject.org/tor-browser/" target="_blank" rel="noopener noreferrer">Tor Project: Tor Browser manual</a> · <a href="https://support.torproject.org/tor-browser/getting-started/downloading/" target="_blank" rel="noopener noreferrer">Official download guidance</a> · <a href="https://support.torproject.org/tor-browser/getting-started/first-launch/" target="_blank" rel="noopener noreferrer">First launch guide</a></p>
+</section>
+<section class="card" id="opsec">
+<h2>4. Personal OPSEC (operational security)</h2>
+<p>OPSEC is the habit of thinking about what information could expose something you want to keep private. For everyday personal safety, use it to reduce accidental oversharing and protect accounts—not to promise that someone can become untraceable.</p>
+<h3>A simple threat-model worksheet</h3>
+<ol><li><strong>Asset:</strong> What are you protecting? Examples include account access, private photos, location, or personal conversations.</li><li><strong>Threat:</strong> What could realistically go wrong? Examples include phishing, account takeover, doxxing, or a lost device.</li><li><strong>Exposure:</strong> Where could the information leak? Consider public profiles, app permissions, metadata, reused passwords, and shared devices.</li><li><strong>Controls:</strong> Use unique passwords, a password manager, multi-factor authentication, updates, backups, and careful sharing.</li><li><strong>Review:</strong> Revisit your choices when your device, accounts, or circumstances change.</li></ol>
+<p>Do not post private addresses, school or workplace details, real-time location, identity documents, recovery codes, or screenshots containing account tokens.</p>
+</section>
+<section class="card" id="browser">
+<h2>5. Browser privacy</h2>
+<ul><li>Keep your browser and extensions updated.</li><li>Remove extensions you do not recognize or need.</li><li>Review site permissions for camera, microphone, location, and notifications.</li><li>Use built-in tracking protection and be cautious with third-party cookies.</li><li>Understand that browser fingerprinting can combine many ordinary settings into a recognizable pattern.</li></ul>
+<p><a href="https://support.mozilla.org/en-US/products/firefox/privacy-and-security" target="_blank" rel="noopener noreferrer">Mozilla: privacy and security help</a></p>
+</section>
+<section class="card" id="linux">
+<h2>6. Linux and network basics</h2>
+<p>Learn the purpose of DNS, IP addresses, routing, firewalls, TLS certificates, and software repositories before changing system settings. Prefer official distribution documentation and signed software repositories. Make a backup before changing network configuration.</p>
+<ul><li>Install security updates through your distribution's supported update mechanism.</li><li>Use trusted repositories and verify software sources.</li><li>Keep firewall rules understandable and document changes.</li><li>Do not paste commands from unknown sources into a root terminal.</li></ul>
+</section>
+<section class="card"><h2>Suggest a guide</h2><p>Want a guide on another topic? Send a request through the community feedback form.</p><a href="feedback.html">Request a guide →</a></section>
+</main>
+<footer>Made with ♡ by Sparky<p>Learn carefully, stay curious, and look after your privacy. :3</p></footer>
+<script defer src="assets/theme.js"></script>
+</body>
+</html>
