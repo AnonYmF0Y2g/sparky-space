@@ -81,7 +81,7 @@
     if (!directory) return;
     directory.textContent = "Loading members...";
     const { data, error } = await client.from("public_profiles")
-      .select("id, username, display_name, bio, status, avatar_url, banner_url, profile_accent, created_at")
+      .select("id, username, display_name, bio, status, avatar_url, banner_url, profile_accent, staff_role, created_at")
       .order("created_at", { ascending: false }).limit(100);
     if (error) { directory.textContent = "Member directory is unavailable: " + error.message; return; }
     if (!data || data.length === 0) { directory.textContent = "No member profiles yet. Be the first!"; return; }
@@ -99,6 +99,12 @@
       const name = document.createElement("strong"); name.textContent = member.display_name || member.username || "Member";
       const username = document.createElement("p"); username.className = "member-meta"; username.textContent = "@" + (member.username || "member");
       content.append(name, username);
+      if (member.staff_role) {
+        const role = document.createElement("span"); role.className = "profile-role-badge";
+        const roleNames = {owner:"Owner",admin:"Admin",moderator:"Moderator",support:"Support"};
+        role.textContent = "✦ " + (roleNames[member.staff_role] || "Staff");
+        content.append(role);
+      }
       if (member.status) { const status = document.createElement("p"); status.textContent = member.status; content.append(status); }
       if (member.bio) { const bio = document.createElement("p"); bio.textContent = member.bio; content.append(bio); }
       const joined = document.createElement("p"); joined.className = "member-meta";
