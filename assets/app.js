@@ -141,7 +141,15 @@
       if (member.bio) { const bio = document.createElement("p"); bio.textContent = member.bio; content.append(bio); }
       const joined = document.createElement("p"); joined.className = "member-meta";
       joined.textContent = member.created_at ? "Joined " + new Date(member.created_at).toLocaleDateString() : "";
-      content.append(joined); card.append(content); directory.append(card);
+      content.append(joined);
+      if (member.username) {
+        const view = document.createElement("a");
+        view.href = "profile.html?username=" + encodeURIComponent(member.username);
+        view.textContent = "View profile →";
+        view.className = "member-profile-link";
+        content.append(view);
+      }
+      card.append(content); directory.append(card);
     }
     setText("members-message", data.length === 100 ? "Showing the first 100 members." : data.length + " member profile(s).");
   }
@@ -167,7 +175,7 @@
     setText("profile-message", "Saving your profile...");
     const tags = [...new Set((byId("profile-tags-input")?.value || "")
       .split(",").map(value => value.trim().replace(/^#/, "")).filter(Boolean))];
-    if (tags.length > 6 || tags.some(tag => tag.length < 2 || tag.length > 24 || !/^[\\p{L}\\p{N} _-]+$/u.test(tag))) {
+    if (tags.length > 6 || tags.some(tag => tag.length < 2 || tag.length > 24 || !/^[\p{L}\p{N} _-]+$/u.test(tag))) {
       save.disabled = false;
       setText("profile-message", "Use up to 6 tags. Each must be 2–24 letters, numbers, spaces, underscores, or hyphens.");
       return;
