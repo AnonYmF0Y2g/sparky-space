@@ -106,8 +106,8 @@
       } else {
         const visible = [rtc.host ? "host candidate" : "", rtc.srflx ? "server-reflexive candidate" : "", rtc.relay ? "relay candidate" : "", rtc.mDNS ? "mDNS-obfuscated host candidate" : ""].filter(Boolean);
         addResult("WebRTC candidate check",
-          visible.length ? "Candidate types observed: " + visible.join(", ") + ". Raw candidate addresses were not displayed or sent to Sparky's Space." : "No candidates were observed before the check ended. This is inconclusive, not proof of a leak-free setup.",
-          rtc.srflx || (rtc.host && !rtc.mDNS) ? "issue" : "checking");
+          visible.length ? "Candidate types observed: " + visible.join(", ") + ". A server-reflexive candidate is visible to the STUN provider; compare the public IP result with your expected route. A non-mDNS host candidate may reveal local network details to page scripts. Raw addresses were not displayed or sent to Sparky's Space." : "No candidates were observed before the check ended. This is inconclusive, not proof of a leak-free setup.",
+          rtc.host && !rtc.mDNS ? "issue" : "checking");
       }
     } catch (error) {
       addResult("WebRTC candidate check", "The browser could not complete the check. This may be caused by browser settings or network restrictions.", "issue");
