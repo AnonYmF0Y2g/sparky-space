@@ -800,7 +800,7 @@
         });
         if (insertError) throw insertError;
         textarea.value = ""; imageInput.value = "";
-        status.textContent = "Reply submitted. It will appear after moderator approval.";
+        root.replaceChildren();
         await renderImageboardThread(post, user, boardSlug, root);
       } catch (submitError) {
         if (uploadedPath) await client.storage.from("community-images").remove([uploadedPath]);
