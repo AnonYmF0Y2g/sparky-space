@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d18">
+<title>Privacy Test Center · Sparky's Space ♡</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="site-header"><h1>♡ Privacy Test Center</h1><p>Optional browser checks, explained before they run</p></header>
+<nav aria-label="Main navigation">
+<a href="index.html">Home</a><a href="community.html">Community</a><a href="community-hub.html">Community Hub</a><a href="image-board.html">Image Board</a><a href="guides.html">Tech Guides</a><a href="privacy.html">Privacy</a><a href="privacy-tests.html" aria-current="page">Privacy Tests</a><a href="feedback.html">Feedback</a><a href="account.html">Account</a>
+</nav>
+<main>
+<section class="card">
+<h2>Before you run anything</h2>
+<p>No tests run automatically. The local checks below display results in this page only. Sparky's Space does not send test results to its database or save them in your account.</p>
+<p><strong>Important:</strong> the public-IP check contacts ipify, and the WebRTC check contacts Google's public STUN server. Those providers can see the network address used for those requests. A third-party DNS test also sees its own test traffic. Their privacy and retention practices are separate from Sparky's Space.</p>
+<label class="rules-accept"><input type="checkbox" id="privacy-test-consent"> I understand which external services are contacted and want to run the selected checks.</label>
+<button type="button" id="run-privacy-tests" disabled>Run browser and IP checks</button>
+<p id="privacy-test-status" role="status" aria-live="polite" class="section-note">Waiting for your choice. Nothing has run.</p>
+<div id="privacy-test-results" class="status-list" aria-live="polite"></div>
+</section>
+<section class="card">
+<h2>DNS leak testing</h2>
+<p>A reliable DNS leak test needs a test service to receive DNS queries and report which resolvers handled them. This website does not operate that infrastructure, so it will not pretend to measure DNS leaks locally.</p>
+<p>After reading the provider's privacy information, you can choose to open a third-party DNS test. That provider may see your public IP address and the resolver addresses involved in the test. Results are shown on its website, not stored by Sparky's Space.</p>
+<button type="button" id="open-dns-test" disabled>Open third-party DNS leak test</button>
+<p class="section-note">External service: <a href="https://www.dnsleaktest.com/" target="_blank" rel="noopener noreferrer">DNSLeakTest.com</a>. This is optional and is not operated by Sparky's Space.</p>
+</section>
+<section class="card">
+<h2>What these checks mean</h2>
+<ul>
+<li><strong>Public IP:</strong> shows the address seen by the IP-check provider. A VPN may change the address websites see, but this alone does not prove that all traffic uses the VPN.</li>
+<li><strong>WebRTC:</strong> checks whether the browser gathers host or server-reflexive ICE candidates. Browser privacy settings and mDNS can change what is visible; an inconclusive result is possible.</li>
+<li><strong>Secure context:</strong> checks whether this page is loaded over HTTPS.</li>
+<li><strong>Privacy signals:</strong> reads browser-provided Global Privacy Control and Do Not Track signals. These are preferences, not technical blocking guarantees.</li>
+<li><strong>DNS:</strong> must be checked by a DNS test provider or by examining device/router configuration. A web page cannot reliably infer all system DNS behavior from a simple browser request.</li>
+</ul>
+<p>No result proves that a person is anonymous or untraceable. These are limited snapshots, not a penetration test, malware scan, or audit of the whole device.</p>
+</section>
+<section class="card"><h2>Learn how to improve privacy</h2><a href="guides.html">Open the Tech Guides Library →</a></section>
+</main>
+<footer>Made with ♡ by Sparky<p>Your choice, your browser, your results. ^w^</p></footer>
+<script defer src="assets/privacy-tests.js"></script>
+<script defer src="assets/theme.js"></script>
+</body>
+</html>
