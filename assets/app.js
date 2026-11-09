@@ -968,7 +968,14 @@
       await loadCommunityPosts(user);
     } catch (error) {
       if (uploaded) await client.storage.from("community-images").remove([path]);
-      status.textContent = "Couldn't submit the image: " + (error.message || "Please try again.");
+      let detail = error?.message || "Please try again.";
+      if (error?.context && typeof error.context.clone === "function") {
+        try {
+          const responseBody = await error.context.clone().json();
+          if (typeof responseBody?.error === "string" && responseBody.error.trim()) detail = responseBody.error;
+        } catch { /* Keep the SDK message when the response has no JSON body. */ }
+      }
+      status.textContent = "Couldn't submit the image: " + detail;
     } finally { button.disabled = false; resetCaptcha(communityWidget); }
   });
 
