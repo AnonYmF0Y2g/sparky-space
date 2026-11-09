@@ -13,13 +13,16 @@
 <a href="index.html">Home</a><a href="community.html">Community</a><a href="community-hub.html">Community Hub</a><a href="image-board.html">Image Board</a><a href="guides.html" aria-current="page">Tech Guides</a><a href="privacy.html">Privacy</a><a href="privacy-tests.html">Privacy Tests</a><a href="feedback.html">Feedback</a><a href="account.html">Account</a>
 </nav>
 <main>
-<section class="card"><h2>Start here: privacy foundations</h2><p>These guides focus on personal safety, informed choices, and defensive privacy. No single app, VPN, browser, or setting makes someone completely anonymous or untraceable. Start by deciding what information you want to protect and from whom.</p>
+<section class="card"><h2>Start here: privacy foundations</h2><p>These guides focus on personal safety, informed choices, and defensive privacy. No single app, VPN, browser, or setting makes someone completely anonymous or untraceable. Use privacy tools responsibly and follow the rules of devices and networks you use. Start by deciding what information you want to protect and from whom.</p>
 <div class="quick-links">
 <a class="quick-link" href="#dns"><strong>DNS &amp; encrypted DNS</strong><span>Resolvers, DoH, DoT, and what encryption does.</span></a>
 <a class="quick-link" href="#vpn"><strong>VPN basics</strong><span>What a VPN protects, what it cannot hide, and setup checks.</span></a>
 <a class="quick-link" href="#tor"><strong>Tor Browser</strong><span>Official downloads, safe defaults, and limitations.</span></a>
 <a class="quick-link" href="#opsec"><strong>Personal OPSEC</strong><span>Threat modeling, account separation, and data minimization.</span></a>
 <a class="quick-link" href="#browser"><strong>Browser privacy</strong><span>Permissions, tracking protection, updates, and fingerprinting.</span></a>
+<a class="quick-link" href="#accounts"><strong>Password managers &amp; MFA</strong><span>Protect accounts with unique passwords and recovery planning.</span></a>
+<a class="quick-link" href="#encryption"><strong>Encryption &amp; backups</strong><span>Protect devices and keep recoverable backups.</span></a>
+<a class="quick-link" href="#metadata"><strong>Metadata &amp; sharing</strong><span>Reduce accidental oversharing in photos and documents.</span></a>
 <a class="quick-link" href="#linux"><strong>Linux &amp; networking</strong><span>System updates, firewall concepts, and network basics.</span></a>
 </div></section>
 <section class="card" id="dns">
@@ -56,8 +59,22 @@
 <ul><li>Keep your browser and extensions updated.</li><li>Remove extensions you do not recognize or need.</li><li>Review site permissions for camera, microphone, location, and notifications.</li><li>Use built-in tracking protection and be cautious with third-party cookies.</li><li>Understand that browser fingerprinting can combine many ordinary settings into a recognizable pattern.</li></ul>
 <p><a href="https://support.mozilla.org/en-US/products/firefox/privacy-and-security" target="_blank" rel="noopener noreferrer">Mozilla: privacy and security help</a></p>
 </section>
+<section class="card" id="accounts">
+<h2>6. Password managers and multi-factor authentication</h2>
+<ul><li>Use a different, strong password for every important account.</li><li>Store passwords in a reputable password manager and protect it with a strong master passphrase.</li><li>Enable multi-factor authentication or passkeys where supported.</li><li>Keep recovery codes somewhere private and secure; never share them with anyone.</li><li>Be alert for fake sign-in pages and unexpected password-reset messages.</li></ul>
+</section>
+<section class="card" id="encryption">
+<h2>7. Device encryption and backups</h2>
+<p>Device encryption helps protect stored files if a device is lost or accessed without authorization. Check your operating system's official documentation to understand whether encryption is enabled and where recovery keys are stored.</p>
+<ul><li>Keep recovery keys separate from the device they unlock.</li><li>Maintain backups of important files and test that you can restore them.</li><li>Use encrypted backups for sensitive material and protect backup credentials.</li><li>Keep the operating system and security software updated.</li></ul>
+</section>
+<section class="card" id="metadata">
+<h2>8. Metadata and safer sharing</h2>
+<p>Photos and documents can contain extra information such as timestamps, device details, author names, or location metadata. Screenshots can also reveal usernames, notifications, browser tabs, or account identifiers.</p>
+<ul><li>Review a file before posting it publicly.</li><li>Use built-in privacy or export settings to remove metadata when appropriate.</li><li>Crop or redact account details from screenshots before sharing.</li><li>Do not upload identity documents, private messages, or images that reveal your location.</li></ul>
+</section>
 <section class="card" id="linux">
-<h2>6. Linux and network basics</h2>
+<h2>9. Linux and network basics</h2>
 <p>Learn the purpose of DNS, IP addresses, routing, firewalls, TLS certificates, and software repositories before changing system settings. Prefer official distribution documentation and signed software repositories. Make a backup before changing network configuration.</p>
 <ul><li>Install security updates through your distribution's supported update mechanism.</li><li>Use trusted repositories and verify software sources.</li><li>Keep firewall rules understandable and document changes.</li><li>Do not paste commands from unknown sources into a root terminal.</li></ul>
 </section>
