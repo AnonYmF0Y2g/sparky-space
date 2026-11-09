@@ -17,7 +17,11 @@
 <h2>Before you run anything</h2>
 <p>No tests run automatically. The local checks below display results in this page only. Sparky's Space does not send test results to its database or save them in your account.</p>
 <p><strong>Important:</strong> the public-IP check contacts ipify, and the WebRTC check contacts Google's public STUN server. Those providers can see the network address used for those requests. A third-party DNS test also sees its own test traffic. Their privacy and retention practices are separate from Sparky's Space.</p>
-<label class="rules-accept"><input type="checkbox" id="privacy-test-consent"> I understand which external services are contacted and want to run the selected checks.</label>
+<p><strong>Would you like to run the optional checks?</strong> Choose Yes to enable them, or No to leave everything off.</p>
+<div class="actions">
+<button type="button" id="privacy-test-yes">Yes, enable tests</button>
+<button type="button" class="secondary" id="privacy-test-no">No, leave them off</button>
+</div>
 <button type="button" id="run-privacy-tests" disabled>Run browser and IP checks</button>
 <p id="privacy-test-status" role="status" aria-live="polite" class="section-note">Waiting for your choice. Nothing has run.</p>
 <div id="privacy-test-results" class="status-list" aria-live="polite"></div>
