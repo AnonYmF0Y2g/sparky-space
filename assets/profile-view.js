@@ -100,19 +100,13 @@
   async function loadGuestbook() {
     const target = $("guestbook-entries");
     target.replaceChildren(node("p","Loading guestbook...","section-note"));
-    const {data,error} = await db.from("guestbook_entries")
-      .select("id,message,created_at,author_id")
-      .eq("profile_id",profile.id).order("created_at",{ascending:false}).limit(30);
+    const {data,error} = await db.rpc("get_public_guestbook",{p_profile_id:profile.id});
     target.replaceChildren();
     if (error) { target.append(node("p","Guestbook is temporarily unavailable.","section-note")); return; }
     if (!data?.length) { target.append(node("p","No messages yet. You can be the first!","section-note")); return; }
-    const authorIds = [...new Set(data.map(item=>item.author_id))];
-    const {data:authors} = await db.from("public_profiles").select("id,username,display_name").in("id",authorIds);
-    const authorMap = new Map((authors || []).map(author=>[author.id,author]));
     for (const entry of data) {
-      const author = authorMap.get(entry.author_id);
       const card = node("article",undefined,"feature-item");
-      card.append(node("strong",author ? (author.display_name || "@"+author.username) : "Community member"));
+      card.append(node("strong",entry.author_name || "Community member"));
       card.append(node("p",entry.message));
       card.append(node("small",new Date(entry.created_at).toLocaleString()));
       target.append(card);
