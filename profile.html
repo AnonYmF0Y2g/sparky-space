@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d18">
+<title>Member Profile · Sparky's Space ♡</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="site-header"><h1>♡ Member Profile</h1><p>A little corner of the community :3</p></header>
+<nav aria-label="Main navigation">
+<a href="index.html">Home</a><a href="community.html">Community</a><a href="community-hub.html">Community Hub</a><a href="image-board.html">Image Board</a><a href="guides.html">Tech Guides</a><a href="privacy.html">Privacy</a><a href="privacy-tests.html">Privacy Tests</a><a href="feedback.html">Feedback</a><a href="account.html">Account</a>
+</nav>
+<main>
+<section class="card public-profile-page" id="profile-root">
+<p class="section-note">Loading profile...</p>
+</section>
+<section class="card" id="guestbook-panel" hidden>
+<h2>♡ Guestbook</h2>
+<p class="section-note">Leave a friendly message. Never include private contact details or sensitive information.</p>
+<div id="guestbook-entries"><p class="section-note">Loading guestbook...</p></div>
+<form id="profile-guestbook-form" class="feedback-form" hidden>
+<label>Your message<textarea id="profile-guestbook-message" maxlength="400" minlength="2" rows="3" required placeholder="Write something kind..."></textarea></label>
+<button type="submit" id="profile-guestbook-submit">Sign guestbook</button>
+<p id="profile-guestbook-status" role="status" aria-live="polite"></p>
+</form>
+<p id="guestbook-signin-prompt" class="section-note" hidden>Sign in to leave a guestbook message. <a href="account.html">Open Account</a>.</p>
+</section>
+</main>
+<footer>Made with ♡ by Sparky<p>Be kind, respect privacy, and enjoy your visit. ^w^</p></footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="assets/profile-view.js"></script>
+<script defer src="assets/theme.js"></script>
+</body>
+</html>
