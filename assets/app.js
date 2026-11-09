@@ -6,6 +6,7 @@
   const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
   const siteKey = window.SPARKY_CONFIG?.turnstileSiteKey || "";
   let activeUser = null;
+  let originalProfileMedia = { avatar: "", banner: "" };
   let authWidget = null;
   let communityWidget = null;
 
@@ -67,12 +68,20 @@
       byId("profile-display-name").value = data.display_name || "";
       byId("profile-status").value = data.status || "";
       byId("profile-bio").value = data.bio || "";
-      if (byId("profile-avatar-url")) byId("profile-avatar-url").value = data.avatar_url || "";
-      if (byId("profile-banner-url")) byId("profile-banner-url").value = data.banner_url || "";
+      originalProfileMedia = { avatar: data.avatar_url || "", banner: data.banner_url || "" };
+      for (const kind of ["avatar", "banner"]) {
+        const url = safeImageUrl(originalProfileMedia[kind]);
+        const field = byId("profile-" + kind + "-url");
+        const preview = byId("profile-" + kind + "-preview");
+        if (field) field.value = url;
+        if (preview) { preview.hidden = !url; if (url) preview.src = url; else preview.removeAttribute("src"); }
+      }
       if (byId("profile-accent")) byId("profile-accent").value = data.profile_accent || "pink";
       if (byId("profile-is-public")) byId("profile-is-public").checked = data.is_public === true;
       if (byId("profile-show-bio")) byId("profile-show-bio").checked = data.show_bio === true;
       if (byId("profile-show-status")) byId("profile-show-status").checked = data.show_status === true;
+      const { data: tags } = await client.from("profile_tags").select("tag").eq("user_id", user.id);
+      if (byId("profile-tags-input")) byId("profile-tags-input").value = (tags || []).map(item => item.tag).join(", ");
     } else setText("profile-message", "Your profile is still being prepared. Please refresh in a moment.");
   }
 
@@ -137,16 +146,41 @@
     setText("members-message", data.length === 100 ? "Showing the first 100 members." : data.length + " member profile(s).");
   }
 
+  function profileStoragePath(url, userId) {
+    if (!url) return null;
+    try {
+      const parsed = new URL(url);
+      const marker = "/storage/v1/object/public/profile-media/";
+      const index = parsed.pathname.indexOf(marker);
+      if (index < 0) return null;
+      const path = decodeURIComponent(parsed.pathname.slice(index + marker.length));
+      return path.startsWith(userId + "/") ? path : null;
+    } catch { return null; }
+  }
+
   const profileForm = byId("profile-form");
   if (profileForm) profileForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!activeUser) return;
-    const save = byId("profile-save"); save.disabled = true; setText("profile-message", "Saving profile...");
-    let avatarUrl = "", bannerUrl = "";
-    avatarUrl = safeImageUrl(byId("profile-avatar-url").value.trim());
-    bannerUrl = safeImageUrl(byId("profile-banner-url").value.trim());
-    if (byId("profile-avatar-url").value.trim() && !avatarUrl) { save.disabled = false; setText("profile-message", "Avatar links must use HTTPS."); return; }
-    if (byId("profile-banner-url").value.trim() && !bannerUrl) { save.disabled = false; setText("profile-message", "Banner links must use HTTPS."); return; }
+    const save = byId("profile-save");
+    save.disabled = true;
+    setText("profile-message", "Saving your profile...");
+    const tags = [...new Set((byId("profile-tags-input")?.value || "")
+      .split(",").map(value => value.trim().replace(/^#/, "")).filter(Boolean))];
+    if (tags.length > 6 || tags.some(tag => tag.length < 2 || tag.length > 24 || !/^[\\p{L}\\p{N} _-]+$/u.test(tag))) {
+      save.disabled = false;
+      setText("profile-message", "Use up to 6 tags. Each must be 2–24 letters, numbers, spaces, underscores, or hyphens.");
+      return;
+    }
+    const avatarRaw = byId("profile-avatar-url")?.value.trim() || "";
+    const bannerRaw = byId("profile-banner-url")?.value.trim() || "";
+    const avatarUrl = safeImageUrl(avatarRaw);
+    const bannerUrl = safeImageUrl(bannerRaw);
+    if ((avatarRaw && !avatarUrl) || (bannerRaw && !bannerUrl)) {
+      save.disabled = false;
+      setText("profile-message", "Uploaded image links must use HTTPS. Please upload the image again.");
+      return;
+    }
     const values = {
       display_name: byId("profile-display-name").value.trim(),
       status: byId("profile-status").value.trim(),
@@ -158,9 +192,31 @@
       show_bio: byId("profile-show-bio").checked,
       show_status: byId("profile-show-status").checked
     };
-    const { error } = await client.from("profiles").update(values).eq("id", activeUser.id);
+    const { error: profileError } = await client.from("profiles").update(values).eq("id", activeUser.id);
+    if (profileError) {
+      save.disabled = false;
+      setText("profile-message", "Couldn't save your profile: " + profileError.message);
+      return;
+    }
+    const { error: tagsError } = await client.rpc("replace_my_profile_tags", { p_tags: tags });
+    if (tagsError) {
+      save.disabled = false;
+      setText("profile-message", "Profile details saved, but tags could not be saved: " + tagsError.message);
+      return;
+    }
+    for (const kind of ["avatar", "banner"]) {
+      const previous = originalProfileMedia[kind];
+      const current = values[kind + "_url"] || "";
+      const oldPath = previous !== current ? profileStoragePath(previous, activeUser.id) : null;
+      if (oldPath) {
+        const { error: removeError } = await client.storage.from("profile-media").remove([oldPath]);
+        if (removeError) console.warn("Old profile media could not be removed:", removeError.message);
+      }
+      originalProfileMedia[kind] = current;
+    }
     save.disabled = false;
-    setText("profile-message", error ? "Couldn't save: " + error.message : "Profile saved! ^w^");
+    setText("profile-message", "Profile and tags saved! ^w^");
+    setText("profile-upload-message", "Your profile images are up to date.");
   });
 
   async function loadMyReports(user) {
