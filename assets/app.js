@@ -1135,10 +1135,16 @@
     if (!token) { status.textContent = "Complete the verification check before submitting."; return; }
     const title = byId("image-upload-title").value.trim();
     const caption = byId("image-upload-caption").value.trim();
-    const tags = byId("image-upload-tags").value.split(",").map(tag => tag.trim().toLowerCase()).filter(Boolean);
-    if (tags.length > 8 || tags.some(tag => !/^[a-z0-9-]{2,20}$/.test(tag))) {
-      status.textContent = "Use up to eight tags, each 2–20 letters, numbers or hyphens."; return;
+    const boardSlug = byId("image-upload-board")?.value || "art";
+    if (!Object.prototype.hasOwnProperty.call(imageboardBoards, boardSlug)) {
+      status.textContent = "Choose a valid board."; return;
     }
+    const userTags = byId("image-upload-tags").value.split(",")
+      .map(tag => tag.trim().toLowerCase()).filter(tag => tag && !tag.startsWith("board-"));
+    if (userTags.length > 7 || userTags.some(tag => !/^[a-z0-9-]{2,20}$/.test(tag))) {
+      status.textContent = "Use up to seven tags, each 2–20 letters, numbers or hyphens."; return;
+    }
+    const tags = ["board-" + boardSlug, ...userTags];
     const extension = file.type === "image/jpeg" ? "jpg" : file.type === "image/png" ? "png" : "webp";
     const path = user.id + "/" + crypto.randomUUID() + "." + extension;
     button.disabled = true; status.textContent = "Uploading your image securely...";
