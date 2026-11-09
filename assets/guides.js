@@ -1,15 +1,20 @@
-/* Device selector for the free guide library. */
+/* Separate selectors: topic manuals and platform manuals. */
 (() => {
-  const select = document.getElementById("guide-device-select");
-  const button = document.getElementById("guide-device-go");
-  if (!select || !button) return;
-  const go = () => {
-    const destination = select.value;
-    if (destination) window.location.href = destination;
-    else select.focus();
-  };
-  button.addEventListener("click", go);
-  select.addEventListener("keydown", event => {
-    if (event.key === "Enter") go();
-  });
+  const pairs = [
+    ["guide-topic-select", "guide-topic-go"],
+    ["guide-platform-select", "guide-platform-go"]
+  ];
+  for (const [selectId, buttonId] of pairs) {
+    const select = document.getElementById(selectId);
+    const button = document.getElementById(buttonId);
+    if (!select || !button) continue;
+    const go = () => {
+      if (select.value) window.location.href = select.value;
+      else select.focus();
+    };
+    button.addEventListener("click", go);
+    select.addEventListener("keydown", event => {
+      if (event.key === "Enter") go();
+    });
+  }
 })();
