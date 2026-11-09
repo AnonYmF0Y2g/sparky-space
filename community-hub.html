@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100d18"><title>Community Hub · Sparky's Space ♡</title><link rel="stylesheet" href="assets/theme.css"></head>
+<body>
+<header class="site-header"><h1>♡ Sparky's Space ♡</h1><p>A little corner of the internet :3</p></header>
+<nav aria-label="Main navigation"><a href="index.html">Home</a><a href="community.html">Members</a><a href="community-hub.html" aria-current="page">Community Hub</a><a href="image-board.html">Image Board</a><a href="account.html">Account</a><a href="safety.html">Safety &amp; Reports</a></nav>
+<main>
+<section class="card"><h2>♡ Community Hub</h2><p>Guestbooks, discussions, profile badges, and your little virtual companion—all in one place.</p><p id="hub-auth" role="status">Checking sign-in...</p></section>
+<div class="feature-grid">
+<section class="feature-panel"><h2>♡ Guestbook</h2><p>Leave a friendly note on a member's page.</p><label>Member username<input id="guestbook-username" maxlength="20" placeholder="username"></label><label>Message<textarea id="guestbook-message" maxlength="400" rows="3" placeholder="Write something kind..."></textarea></label><button id="guestbook-submit">Sign guestbook</button><div id="guestbook-list" aria-live="polite"></div></section>
+<section class="feature-panel"><h2>♡ Community Forum</h2><label>Category<select id="forum-category"></select></label><label>Discussion title<input id="forum-title" maxlength="100" placeholder="What's on your mind?"></label><label>Message<textarea id="forum-body" maxlength="4000" rows="4" placeholder="Start a friendly discussion..."></textarea></label><button id="forum-submit">Create discussion</button><div id="forum-list" aria-live="polite"></div></section>
+<section class="feature-panel"><h2>♡ Your Virtual Pet</h2><div class="pet-preview" id="pet-preview" aria-live="polite">🐾</div><label>Name<input id="pet-name" maxlength="24" value="Sparky"></label><label>Companion<select id="pet-species"><option value="protogen">Protogen</option><option value="cat">Cat</option><option value="fox">Fox</option><option value="dragon">Dragon</option><option value="blob">Blob</option></select></label><label>Color<select id="pet-color"><option>pink</option><option>purple</option><option>blue</option><option>cyan</option><option>teal</option><option>green</option><option>orange</option><option>red</option></select></label><label>Accessory<select id="pet-accessory"><option value="none">None</option><option value="bow">Bow</option><option value="star">Star</option><option value="scarf">Scarf</option><option value="headphones">Headphones</option></select></label><button id="pet-save">Save companion</button></section>
+<section class="feature-panel"><h2>♡ Badge Collection</h2><p>Official awards appear here. Staff roles are assigned separately and cannot be self-selected.</p><div id="badge-list">Loading badges...</div></section>
+<section class="feature-panel"><h2>♡ Staff Activity</h2><p>Visible only to authorized staff. Displays recent moderation activity, not private member messages.</p><div id="staff-feed">Staff access required.</div></section>
+</div>
+</main><footer>Made with ♡ by Sparky<p>Thanks for visiting! ^w^</p></footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script defer src="assets/features.js"></script><script defer src="assets/theme.js"></script>
+</body></html>
