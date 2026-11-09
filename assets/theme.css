@@ -263,3 +263,18 @@ body>nav::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}
 .guide-welcome p,.guide-help p{max-width:70ch;line-height:1.65}
 .guide-help .actions{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
 @media(max-width:600px){body>nav{justify-content:flex-start;padding-inline:9px!important}body>nav a{padding:8px 10px;font-size:12px}.guide-category{min-height:0;padding:18px}}
+\n
+/* Free, in-depth guide library */
+.guide-free{border:1px solid var(--accent);background:var(--surface-raised)}
+.guide-free h2{margin-top:0;color:var(--accent)}
+.guide-free p{max-width:78ch;line-height:1.7}
+.guide-device-picker{display:grid;gap:10px}
+.guide-device-picker h2{margin:0}
+.guide-picker-controls label{display:grid;gap:9px;max-width:620px;font-weight:700}
+.guide-picker-controls select{width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;background:var(--page);color:var(--text);font:inherit}
+.guide-picker-controls button{width:max-content;max-width:100%;padding:10px 16px;border:0;border-radius:999px;background:var(--accent-strong);color:#100d18;font:inherit;font-weight:750;cursor:pointer}
+.guide-feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px}
+.guide-feature-grid .guide-category{min-height:140px;padding:18px}
+.guide-feature-grid h3{margin:0}
+.guide-feature-grid p{margin:0;color:var(--muted);line-height:1.6}
+main>.card{scroll-margin-top:80px}
