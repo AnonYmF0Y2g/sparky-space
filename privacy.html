@@ -62,8 +62,9 @@
     <h3>What the site stores</h3>
     <ul>
       <li><strong>Account:</strong> Supabase Auth manages your sign-in and account email. The browser stores the Supabase session so you can stay signed in.</li>
-      <li><strong>Profile:</strong> username, display name, bio, status, avatar/banner links, accent, privacy settings, and timestamps.</li>
-      <li><strong>Community safety:</strong> reports, appeals, moderation records, and limited security-event categories. Security events currently record event type, source category, and timestamp—not IP addresses.</li>
+      <li><strong>Profile:</strong> username, display name, bio, status, uploaded avatar/banner image URLs, accent, privacy settings, and timestamps. Profile images are in a public media bucket; anyone with a direct image URL may be able to view that file.</li>
+      <li><strong>Community safety:</strong> reports, appeals, moderation records, guestbook entries, and limited security-event categories. Security events currently record event type, source category, and timestamp—not IP addresses.</li>
+      <li><strong>Feedback:</strong> suggestions from guests and signed-in users, including category, title, message, status, and staff review details. The form does not request an email address. Feedback is visible to authorized staff and has no automatic deletion schedule yet.</li>
       <li><strong>Browser preferences:</strong> theme, accent, text size, and reduced-motion choice are stored locally under four <code>sparky-*</code> keys.</li>
     </ul>
   </div>
@@ -83,6 +84,7 @@
       <li><strong>Supabase:</strong> authentication, database, and account session handling.</li>
       <li><strong>Cloudflare Turnstile:</strong> bot checks on account and community report/appeal forms. Cloudflare may process browser/device signals and may use cookies as part of its service.</li>
       <li><strong>jsDelivr:</strong> delivers the Supabase JavaScript library used by the site.</li>
+      <li><strong>Optional Privacy Test Center:</strong> only after a visitor opts in, the public-IP check contacts ipify and the WebRTC check contacts a public STUN service. The optional DNS test opens DNSLeakTest.com. Those providers receive the requests and may process their own connection logs; Sparky's Space does not store the displayed test results.</li>
       <li>The reviewed first-party source does not include advertising analytics or an analytics tracker. External providers have their own privacy practices.</li>
     </ul>
     <p class="section-note">The site itself does not request your location. This source review found no first-party code that creates cookies, but a complete cookie inventory requires testing actual browser responses and third-party behavior; this page does not claim that no cookies are ever set.</p>
@@ -100,7 +102,7 @@
   </div>
   <div class="privacy-section">
     <h3>Retention and improvements still in progress</h3>
-    <p>Reports, appeals, moderation records, and security-event records do not yet have a published, automated retention schedule. They are not silently deleted by a timed cleanup job. A documented schedule and review process still need to be established before automatic cleanup is enabled.</p>
+    <p>Reports, appeals, moderation records, feedback submissions, guestbook entries, and security-event records do not yet have a published, automated retention schedule. They are not silently deleted by a timed cleanup job. A documented schedule and review process still need to be established before automatic cleanup is enabled.</p>
     <p>Staff access is restricted by role-based database policies, but read-access auditing is not yet implemented. The site does not currently offer a full device/session history.</p>
   </div>
   <p class="section-note">Questions about a privacy request can be raised with the site owner through the existing community support process. Do not include passwords, authentication codes, or private contact details in a public report.</p>
