@@ -1,4 +1,4 @@
-/* Sparky's Space — saved dark theme and hide-on-scroll navigation */
+/* Sparky's Space — saved dark theme and stable navigation */
 (() => {
   const root = document.documentElement;
   const themeSelect = document.getElementById("theme-choice");
@@ -43,25 +43,6 @@
   themeSelect?.addEventListener("change", () => applyTheme(themeSelect.value));
   accentSelect?.addEventListener("change", () => applyAccent(accentSelect.value));
 
-  const nav = document.querySelector("body > nav");
-  if (!nav) return;
-  let lastY = window.scrollY;
-  let ticking = false;
-  const reveal = () => nav.classList.remove("nav-hidden");
-  const update = () => {
-    const y = window.scrollY;
-    if (y < 80 || y < lastY - 5) reveal();
-    else if (y > 140 && y > lastY + 5 && !nav.contains(document.activeElement)) nav.classList.add("nav-hidden");
-    lastY = y;
-    ticking = false;
-  };
-  window.addEventListener("scroll", () => {
-    if (!ticking) {
-      window.requestAnimationFrame(update);
-      ticking = true;
-    }
-  }, { passive:true });
-  nav.addEventListener("focusin", reveal);
-  nav.addEventListener("pointerenter", reveal);
-  nav.addEventListener("keydown", reveal);
+  // Navigation remains visible and stable; the CSS keeps it to one compact row.
+  // Hiding a sticky nav during scroll caused disorienting scroll jumps on some browsers.
 })();
