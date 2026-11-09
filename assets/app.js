@@ -85,6 +85,21 @@
       .order("created_at", { ascending: false }).limit(100);
     if (error) { directory.textContent = "Member directory is unavailable: " + error.message; return; }
     if (!data || data.length === 0) { directory.textContent = "No member profiles yet. Be the first!"; return; }
+    const memberIds = data.map(member => member.id);
+    const [tagResult, badgeResult] = await Promise.all([
+      client.from("profile_tags").select("user_id,tag").in("user_id", memberIds),
+      client.from("profile_badges").select("user_id,badges(name,icon)").in("user_id", memberIds)
+    ]);
+    const tagsByUser = new Map();
+    for (const item of (tagResult.data || [])) {
+      if (!tagsByUser.has(item.user_id)) tagsByUser.set(item.user_id, []);
+      tagsByUser.get(item.user_id).push(item.tag);
+    }
+    const badgesByUser = new Map();
+    for (const item of (badgeResult.data || [])) {
+      if (!badgesByUser.has(item.user_id)) badgesByUser.set(item.user_id, []);
+      if (item.badges) badgesByUser.get(item.user_id).push(item.badges);
+    }
     directory.replaceChildren();
     for (const member of data) {
       const card = document.createElement("article"); card.className = "member-card";
@@ -105,6 +120,14 @@
         role.textContent = "✦ " + (roleNames[member.staff_role] || "Staff");
         content.append(role);
       }
+      const profileChips = document.createElement("div"); profileChips.className = "profile-chip-row";
+      for (const tagText of (tagsByUser.get(member.id) || [])) {
+        const chip = document.createElement("span"); chip.className = "profile-tag-chip"; chip.textContent = tagText; profileChips.append(chip);
+      }
+      for (const badgeData of (badgesByUser.get(member.id) || [])) {
+        const chip = document.createElement("span"); chip.className = "profile-badge-chip"; chip.textContent = (badgeData.icon || "✦") + " " + badgeData.name; profileChips.append(chip);
+      }
+      if (profileChips.childElementCount) content.append(profileChips);
       if (member.status) { const status = document.createElement("p"); status.textContent = member.status; content.append(status); }
       if (member.bio) { const bio = document.createElement("p"); bio.textContent = member.bio; content.append(bio); }
       const joined = document.createElement("p"); joined.className = "member-meta";
