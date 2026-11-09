@@ -159,3 +159,13 @@ main { min-height:55vh; }
 .image-post-tags .tag { display:inline-block; padding:3px 8px; border-radius:999px; font-size:12px; }
 .image-post-body button.secondary { background:var(--surface)!important; color:var(--text)!important; border:1px solid var(--border)!important; border-radius:999px; padding:8px 12px; }
 .staff-review-image { display:block; width:min(100%,520px); max-height:420px; object-fit:contain; border-radius:12px; border:1px solid var(--border); background:var(--page); margin:12px 0; }
+
+/* Profile editor organization and direct media uploads */
+.profile-media-editor{display:grid;gap:10px;padding:16px;border:1px solid var(--border);border-radius:16px;background:var(--surface-raised)}
+.profile-media-editor h4{margin:0;color:var(--accent)}
+.profile-upload-preview{display:block;max-width:100%;object-fit:cover;border:1px solid var(--border);background:var(--page);border-radius:12px}
+.avatar-preview{width:112px;height:112px;border-radius:50%}
+.banner-preview{width:100%;max-height:180px;aspect-ratio:3/1}
+.profile-role-badge{display:inline-flex;align-items:center;width:max-content;margin:5px 0;padding:4px 10px;border:1px solid var(--member-accent,var(--accent));border-radius:999px;color:var(--member-accent,var(--accent));font-size:12px;font-weight:700}
+.profile-editor-organized>label{padding:8px 0}
+.profile-editor-organized textarea{min-height:100px}
