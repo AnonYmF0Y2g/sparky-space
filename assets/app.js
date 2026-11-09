@@ -684,13 +684,17 @@
     const opHeading = imageboardNode("h3", post.title);
     const opMeta = imageboardNode("p", "Anonymous · " + new Date(post.created_at).toLocaleString(), "ib-post-meta");
     op.append(opHeading, opMeta);
-    const imageUrl = await imageboardSignedImage(post.storage_path, 3600);
-    if (imageUrl) {
-      const image = imageboardNode("img", undefined, "ib-original-image");
-      image.src = imageUrl; image.alt = post.title; image.loading = "lazy";
-      op.append(image);
+    if (post.storage_path) {
+      const imageUrl = await imageboardSignedImage(post.storage_path, 3600);
+      if (imageUrl) {
+        const image = imageboardNode("img", undefined, "ib-original-image");
+        image.src = imageUrl; image.alt = post.title; image.loading = "lazy";
+        op.append(image);
+      } else {
+        op.append(imageboardNode("p", "The attached image is not available.", "section-note"));
+      }
     } else {
-      op.append(imageboardNode("p", "The original image is not available.", "section-note"));
+      op.append(imageboardNode("p", "Text-only thread · no image attached.", "section-note"));
     }
     if (post.caption) op.append(imageboardNode("p", post.caption, "ib-post-comment"));
     const visibleTags = (post.tags || []).filter(tag => !String(tag).startsWith("board-"));
@@ -716,7 +720,7 @@
             remove.disabled = false;
             return;
           }
-          await client.storage.from("community-images").remove([post.storage_path]);
+          if (post.storage_path) await client.storage.from("community-images").remove([post.storage_path]);
           window.location.href = "image-board.html?board=" + encodeURIComponent(boardSlug);
         });
         const messageNode = imageboardNode("p", "", "section-note");
@@ -887,7 +891,7 @@
     }
     root.replaceChildren();
     if (!visiblePosts.length) {
-      root.append(imageboardNode("p", "No threads on this board yet. Start one with an image above."));
+      root.append(imageboardNode("p", "No threads on this board yet. Start a text-only thread or attach an image."));
     }
     for (const post of visiblePosts) {
       const row = imageboardNode("article", undefined, "ib-thread-row");
@@ -923,12 +927,11 @@
     event.preventDefault();
     const status = byId("image-upload-message");
     const button = byId("image-upload-submit");
-    const file = byId("image-upload-file").files?.[0];
+    const file = byId("image-upload-file").files?.[0] || null;
     const userResult = await client.auth.getUser();
     const user = userResult.data?.user;
-    if (userResult.error || !user) { status.textContent = "Please sign in before submitting an image."; return; }
-    if (!file) { status.textContent = "Choose an image first."; return; }
-    if (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024) {
+    if (userResult.error || !user) { status.textContent = "Please sign in before submitting a thread."; return; }
+    if (file && (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024)) {
       status.textContent = "Choose a JPG, PNG or WebP image under 5 MB."; return;
     }
     const token = captchaToken(communityWidget);
@@ -945,16 +948,18 @@
       status.textContent = "Use up to seven tags, each 2–20 letters, numbers or hyphens."; return;
     }
     const tags = ["board-" + boardSlug, ...userTags];
-    const extension = file.type === "image/jpeg" ? "jpg" : file.type === "image/png" ? "png" : "webp";
-    const path = user.id + "/" + crypto.randomUUID() + "." + extension;
-    button.disabled = true; status.textContent = "Uploading your image securely...";
+    const extension = file ? (file.type === "image/jpeg" ? "jpg" : file.type === "image/png" ? "png" : "webp") : "";
+    const path = file ? user.id + "/" + crypto.randomUUID() + "." + extension : null;
+    button.disabled = true; status.textContent = file ? "Uploading your image securely..." : "Submitting your text-only thread...";
     let uploaded = false;
     try {
-      const { error: uploadError } = await client.storage.from("community-images").upload(path, file, {
-        contentType: file.type, cacheControl: "3600", upsert: false
-      });
-      if (uploadError) throw uploadError;
-      uploaded = true;
+      if (file) {
+        const { error: uploadError } = await client.storage.from("community-images").upload(path, file, {
+          contentType: file.type, cacheControl: "3600", upsert: false
+        });
+        if (uploadError) throw uploadError;
+        uploaded = true;
+      }
       const { data, error } = await client.functions.invoke("submit-community-action", {
         body: {
           action: "image_post", token, website: "", title, caption, tags,
@@ -964,7 +969,7 @@
       if (error) throw error;
       if (!data?.success) throw new Error(data?.error || "The post could not be queued.");
       imageUploadForm.reset();
-      status.textContent = "Submitted! Your image is private until a moderator approves it.";
+      status.textContent = "Submitted! Your thread is private until a moderator approves it.";
       await loadCommunityPosts(user);
     } catch (error) {
       if (uploaded) await client.storage.from("community-images").remove([path]);
@@ -975,7 +980,7 @@
           if (typeof responseBody?.error === "string" && responseBody.error.trim()) detail = responseBody.error;
         } catch { /* Keep the SDK message when the response has no JSON body. */ }
       }
-      status.textContent = "Couldn't submit the image: " + detail;
+      status.textContent = "Couldn't submit the thread: " + detail;
     } finally { button.disabled = false; resetCaptcha(communityWidget); }
   });
 
@@ -997,8 +1002,10 @@
       const details = document.createElement("p"); details.textContent = post.caption || "No caption";
       const owner = document.createElement("p"); owner.className = "member-meta"; owner.textContent = "Submitted " + new Date(post.created_at).toLocaleString();
       card.append(heading, details, owner);
-      const { data: signed } = await client.storage.from("community-images").createSignedUrl(post.storage_path, 900);
-      if (signed?.signedUrl) { const image = document.createElement("img"); image.className = "staff-review-image"; image.src = signed.signedUrl; image.alt = post.title; card.append(image); }
+      if (post.storage_path) {
+        const { data: signed } = await client.storage.from("community-images").createSignedUrl(post.storage_path, 900);
+        if (signed?.signedUrl) { const image = document.createElement("img"); image.className = "staff-review-image"; image.src = signed.signedUrl; image.alt = post.title; card.append(image); }
+      }
       const actions = document.createElement("div"); actions.className = "privacy-actions";
       for (const [label, nextStatus] of [["Approve","approved"],["Reject","rejected"],["Remove","removed"]]) {
         if (post.status === nextStatus) continue;
