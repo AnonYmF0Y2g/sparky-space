@@ -5,6 +5,7 @@ const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/sit
 const ALLOWED_CATEGORIES = new Set([
   "harassment", "inappropriate_content", "spam", "impersonation", "safety_concern", "other"
 ]);
+const ALLOWED_BOARDS = new Set(["art", "furry", "tech", "games", "general"]);
 
 function response(status: number, body: Record<string, unknown>) {
   return new Response(JSON.stringify(body), {
@@ -67,6 +68,74 @@ Deno.serve(async (req: Request) => {
   }
 
   const userId = authData.user.id;
+
+  if (action === "image_post") {
+    // Quietly discard honeypot submissions without revealing the field to bots.
+    if (typeof body.website === "string" && body.website.trim()) return response(200, { success: true });
+
+    const title = typeof body.title === "string" ? body.title.trim() : "";
+    const caption = typeof body.caption === "string" ? body.caption.trim() : "";
+    const tags = Array.isArray(body.tags) ? body.tags : [];
+    const storagePath = typeof body.storage_path === "string" && body.storage_path.trim()
+      ? body.storage_path.trim() : null;
+
+    if (title.length < 3 || title.length > 80) return response(400, { success: false, error: "Thread subjects must be 3–80 characters." });
+    if (caption.length > 500) return response(400, { success: false, error: "Comments must be 500 characters or fewer." });
+    if (body.rules_accepted !== true) return response(400, { success: false, error: "Please accept the Community Rules before posting." });
+    if (tags.length < 1 || tags.length > 8 || tags.some(tag => typeof tag !== "string" || tag.length > 20 || !/^[a-z0-9-]{2,20}$/.test(tag))) {
+      return response(400, { success: false, error: "Thread tags are invalid." });
+    }
+    const boardTags = tags.filter(tag => typeof tag === "string" && tag.startsWith("board-"));
+    if (boardTags.length !== 1 || !ALLOWED_BOARDS.has(boardTags[0].slice(6))) {
+      return response(400, { success: false, error: "Choose a valid imageboard." });
+    }
+    if (storagePath && (!storagePath.startsWith(userId + "/") || storagePath.length > 300 || storagePath.includes(".."))) {
+      return response(400, { success: false, error: "The uploaded image path is invalid." });
+    }
+
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!serviceRoleKey) {
+      console.error("Imageboard service configuration is missing.");
+      return response(503, { success: false, error: "Imageboard posting is temporarily unavailable." });
+    }
+    // The image-board hardening migration intentionally revoked direct INSERT.
+    // Only this authenticated, validated function uses the service-role client.
+    const admin = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { persistSession: false, autoRefreshToken: false }
+    });
+
+    if (storagePath) {
+      const fileName = storagePath.slice(userId.length + 1);
+      if (!/^[0-9a-f-]{36}[.](jpg|png|webp)$/i.test(fileName)) {
+        return response(400, { success: false, error: "The uploaded image path is invalid." });
+      }
+      const { data: storedFiles, error: storageError } = await admin.storage
+        .from("community-images").list(userId, { search: fileName, limit: 100 });
+      if (storageError || !storedFiles?.some(file => file.name === fileName)) {
+        return response(400, { success: false, error: "The uploaded image could not be found. Please upload it again." });
+      }
+    }
+
+    const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count, error: countError } = await admin.from("community_posts")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", userId).gte("created_at", cutoff);
+    if (countError) {
+      console.error("Imageboard rate-limit check failed:", countError.code);
+      return response(503, { success: false, error: "Couldn't check the posting limit. Please try again." });
+    }
+    if ((count || 0) >= 5) return response(429, { success: false, error: "You've reached the limit of five thread submissions per 24 hours." });
+
+    const { error: insertError } = await admin.from("community_posts").insert({
+      user_id: userId, title, caption, tags, storage_path: storagePath, status: "pending"
+    });
+    if (insertError) {
+      console.error("Imageboard thread insert failed:", insertError.code);
+      return response(400, { success: false, error: "The thread could not be queued. Please try again." });
+    }
+    return response(200, { success: true });
+  }
+
   if (action === "report") {
     const category = typeof body.category === "string" ? body.category : "";
     const details = typeof body.details === "string" ? body.details.trim() : "";
