@@ -103,9 +103,9 @@
       <section class="profile-media-editor" aria-label="Profile images">
         <h4>Profile pictures</h4>
         <label>Profile picture <input id="profile-avatar-file" type="file" accept="image/jpeg,image/png,image/webp"></label>
-        <img id="profile-avatar-preview" class="profile-upload-preview avatar-preview" alt="Profile picture preview" hidden>
+        <img id="profile-avatar-preview" class="profile-upload-preview avatar-preview" alt="Profile picture preview" hidden><button type="button" class="secondary" id="profile-avatar-remove">Remove profile picture</button>
         <label>Profile banner <input id="profile-banner-file" type="file" accept="image/jpeg,image/png,image/webp"></label>
-        <img id="profile-banner-preview" class="profile-upload-preview banner-preview" alt="Profile banner preview" hidden>
+        <img id="profile-banner-preview" class="profile-upload-preview banner-preview" alt="Profile banner preview" hidden><button type="button" class="secondary" id="profile-banner-remove">Remove profile banner</button>
         <p class="section-note">Upload JPG, PNG, or WebP images up to 5 MB. Images appear publicly when your profile is public.</p>
         <input id="profile-avatar-url" type="hidden">
         <input id="profile-banner-url" type="hidden">
@@ -126,7 +126,7 @@
       </fieldset>
       <button type="submit" id="profile-save">Save profile</button>
     </form>
-    <p class="section-note">Only use image links you trust and have permission to share. Avoid personal photos or images containing private information.</p>
+    <p class="section-note">Profile images are stored in the public media bucket. Anyone with a direct image link may be able to view it, so only upload images you intend to share. Avoid personal or sensitive photos.</p>
     <p class="auth-message" id="profile-message" role="status" aria-live="polite"></p>
   </div>
   <p class="auth-message" id="auth-message" role="status" aria-live="polite"></p>
