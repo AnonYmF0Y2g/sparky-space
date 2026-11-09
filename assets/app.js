@@ -811,6 +811,232 @@
     root.append(form);
   }
 
+
+  const imageboardBoards = {
+    art: { code: "/art/", title: "Art & Creativity", description: "Drawings, designs, crafts, and creative projects." },
+    furry: { code: "/fur/", title: "Furry & Characters", description: "Fursonas, character art, and SFW furry creations." },
+    tech: { code: "/tech/", title: "Computers & Tech", description: "PCs, Linux, hardware, software, and setups." },
+    games: { code: "/games/", title: "Gaming", description: "Games, game art, and gaming setups." },
+    general: { code: "/general/", title: "General", description: "Other SFW pictures and community projects." }
+  };
+
+  function imageboardBoardFromUrl() {
+    const requested = new URLSearchParams(window.location.search).get("board") || "art";
+    return Object.prototype.hasOwnProperty.call(imageboardBoards, requested) ? requested : "art";
+  }
+
+  function imageboardNode(tag, text, className) {
+    const node = document.createElement(tag);
+    if (text !== undefined && text !== null) node.textContent = text;
+    if (className) node.className = className;
+    return node;
+  }
+
+  async function imageboardSignedImage(path, ttl = 900) {
+    if (!path) return "";
+    const { data, error } = await client.storage.from("community-images").createSignedUrl(path, ttl);
+    return error || !data?.signedUrl ? "" : data.signedUrl;
+  }
+
+  async function loadImageboardReplyQueue(user) {
+    const panel = byId("imageboard-staff-reply-queue");
+    const root = byId("imageboard-staff-reply-items");
+    if (!panel || !root) return;
+    panel.hidden = true;
+    root.replaceChildren();
+    if (!user) return;
+    const { data: role, error: roleError } = await client.from("staff_roles")
+      .select("role").eq("user_id", user.id).maybeSingle();
+    if (roleError || !["owner", "admin", "moderator"].includes(role?.role)) return;
+    panel.hidden = false;
+    const { data, error } = await client.from("imageboard_replies")
+      .select("id,thread_id,body,image_storage_path,created_at")
+      .eq("status", "pending").order("created_at", { ascending: true }).limit(50);
+    if (error) {
+      root.textContent = "The reply queue could not be loaded.";
+      return;
+    }
+    if (!data?.length) {
+      root.textContent = "There are no replies waiting for review.";
+      return;
+    }
+    for (const reply of data) {
+      const card = imageboardNode("article", undefined, "ib-staff-reply");
+      const heading = imageboardNode("strong", "Pending anonymous reply");
+      const meta = imageboardNode("p", "Submitted " + new Date(reply.created_at).toLocaleString(), "member-meta");
+      const body = imageboardNode("p", reply.body || "Image reply");
+      card.append(heading, meta, body);
+      if (reply.image_storage_path) {
+        const url = await imageboardSignedImage(reply.image_storage_path, 900);
+        if (url) {
+          const image = imageboardNode("img", undefined, "ib-reply-image");
+          image.src = url; image.alt = "Pending reply attachment";
+          card.append(image);
+        } else {
+          card.append(imageboardNode("p", "The attached image could not be previewed.", "section-note"));
+        }
+      }
+      const actions = imageboardNode("div", undefined, "ib-staff-actions");
+      for (const [label, status] of [["Approve", "approved"], ["Reject", "rejected"], ["Remove", "removed"]]) {
+        const button = imageboardNode("button", label);
+        button.type = "button";
+        button.addEventListener("click", async () => {
+          button.disabled = true;
+          const { error: updateError } = await client.from("imageboard_replies").update({
+            status, reviewed_at: new Date().toISOString(), reviewed_by: user.id
+          }).eq("id", reply.id);
+          if (updateError) {
+            body.textContent = "Review failed: " + updateError.message;
+            button.disabled = false;
+          } else {
+            await loadCommunityPosts(activeUser);
+          }
+        });
+        actions.append(button);
+      }
+      card.append(actions);
+      root.append(card);
+    }
+  }
+
+  async function renderImageboardThread(post, user, boardSlug, root) {
+    const board = imageboardBoards[boardSlug] || imageboardBoards.art;
+    const back = imageboardNode("a", "← Back to " + board.code);
+    back.href = "image-board.html?board=" + encodeURIComponent(boardSlug);
+    back.className = "ib-back-link";
+    root.append(back);
+
+    const op = imageboardNode("article", undefined, "ib-original-post");
+    const opHeading = imageboardNode("h3", post.title);
+    const opMeta = imageboardNode("p", "Anonymous · " + new Date(post.created_at).toLocaleString(), "ib-post-meta");
+    op.append(opHeading, opMeta);
+    const imageUrl = await imageboardSignedImage(post.storage_path, 3600);
+    if (imageUrl) {
+      const image = imageboardNode("img", undefined, "ib-original-image");
+      image.src = imageUrl; image.alt = post.title; image.loading = "lazy";
+      op.append(image);
+    } else {
+      op.append(imageboardNode("p", "The original image is not available.", "section-note"));
+    }
+    if (post.caption) op.append(imageboardNode("p", post.caption, "ib-post-comment"));
+    const visibleTags = (post.tags || []).filter(tag => !String(tag).startsWith("board-"));
+    if (visibleTags.length) {
+      const tags = imageboardNode("div", undefined, "image-post-tags");
+      for (const tag of visibleTags) tags.append(imageboardNode("span", tag, "tag"));
+      op.append(tags);
+    }
+    if (post.status === "pending") {
+      op.append(imageboardNode("p", "This thread is awaiting moderator approval and is only visible to you.", "section-note"));
+      root.append(op);
+      return;
+    }
+    root.append(op);
+
+    const replyHeading = imageboardNode("h3", "Replies", "ib-replies-heading");
+    root.append(replyHeading);
+    const replyRoot = imageboardNode("div", undefined, "ib-replies");
+    root.append(replyRoot);
+    const { data: replies, error } = await client.from("imageboard_replies")
+      .select("id,thread_id,body,status,created_at,image_storage_path")
+      .eq("thread_id", post.id).order("created_at", { ascending: true }).limit(100);
+    if (error) {
+      replyRoot.textContent = "Replies are temporarily unavailable.";
+    } else if (!replies?.length) {
+      replyRoot.textContent = "No replies yet. Start the conversation!";
+    } else {
+      for (const reply of replies) {
+        const card = imageboardNode("article", undefined, "ib-reply");
+        const meta = imageboardNode("p", "Anonymous · " + new Date(reply.created_at).toLocaleString(), "ib-post-meta");
+        card.append(meta);
+        if (reply.body) card.append(imageboardNode("p", reply.body, "ib-reply-body"));
+        if (reply.image_storage_path) {
+          const url = await imageboardSignedImage(reply.image_storage_path, 900);
+          if (url) {
+            const image = imageboardNode("img", undefined, "ib-reply-image");
+            image.src = url; image.alt = "Anonymous reply attachment"; image.loading = "lazy";
+            card.append(image);
+          }
+        }
+        if (reply.status === "pending") {
+          card.classList.add("ib-reply-pending");
+          card.append(imageboardNode("small", "Awaiting moderator approval · only you and staff can see this for now."));
+        }
+        replyRoot.append(card);
+      }
+    }
+
+    if (!user) {
+      const signIn = imageboardNode("p", undefined, "section-note");
+      signIn.append(document.createTextNode("Sign in to reply. "));
+      const link = imageboardNode("a", "Open Account");
+      link.href = "account.html";
+      signIn.append(link);
+      root.append(signIn);
+      return;
+    }
+
+    const form = imageboardNode("form", undefined, "ib-reply-form");
+    const label = imageboardNode("label", "Write a reply");
+    const textarea = imageboardNode("textarea");
+    textarea.maxLength = 1200; textarea.rows = 3;
+    textarea.placeholder = "Keep it friendly. Replies are reviewed before publication.";
+    label.append(textarea);
+    const imageLabel = imageboardNode("label", "Attach an image (optional)");
+    const imageInput = imageboardNode("input");
+    imageInput.type = "file"; imageInput.accept = "image/jpeg,image/png,image/webp";
+    imageLabel.append(imageInput);
+    const submit = imageboardNode("button", "Submit reply for review");
+    submit.type = "submit";
+    const status = imageboardNode("p", "", "section-note");
+    status.setAttribute("role", "status"); status.setAttribute("aria-live", "polite");
+    form.append(label, imageLabel, submit, status);
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      const body = textarea.value.trim();
+      const file = imageInput.files?.[0] || null;
+      if (body.length < 2 && !file) {
+        status.textContent = "Write at least two characters or attach an image.";
+        return;
+      }
+      if (body.length > 1200) {
+        status.textContent = "Replies must be 1,200 characters or fewer.";
+        return;
+      }
+      if (file && (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024)) {
+        status.textContent = "Choose a JPG, PNG, or WebP image under 5 MB.";
+        return;
+      }
+      submit.disabled = true;
+      status.textContent = "Submitting your reply...";
+      let uploadedPath = "";
+      try {
+        if (file) {
+          const extension = file.type === "image/jpeg" ? "jpg" : file.type === "image/png" ? "png" : "webp";
+          uploadedPath = user.id + "/" + crypto.randomUUID() + "." + extension;
+          const { error: uploadError } = await client.storage.from("community-images").upload(uploadedPath, file, {
+            contentType: file.type, cacheControl: "3600", upsert: false
+          });
+          if (uploadError) throw uploadError;
+        }
+        const { error: insertError } = await client.from("imageboard_replies").insert({
+          thread_id: post.id,
+          author_id: user.id,
+          body,
+          image_storage_path: uploadedPath || null
+        });
+        if (insertError) throw insertError;
+        textarea.value = ""; imageInput.value = "";
+        status.textContent = "Reply submitted. It will appear after moderator approval.";
+        await renderImageboardThread(post, user, boardSlug, root);
+      } catch (submitError) {
+        if (uploadedPath) await client.storage.from("community-images").remove([uploadedPath]);
+        status.textContent = "Couldn't submit your reply: " + (submitError.message || "Please try again.");
+        submit.disabled = false;
+      }
+    });
+    root.append(form);
+  }
+
   async function loadCommunityPosts(user = activeUser) {
     const root = byId("image-board-grid");
     if (!root) return;
