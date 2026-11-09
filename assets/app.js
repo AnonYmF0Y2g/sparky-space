@@ -175,7 +175,7 @@
     setText("profile-message", "Saving your profile...");
     const tags = [...new Set((byId("profile-tags-input")?.value || "")
       .split(",").map(value => value.trim().replace(/^#/, "")).filter(Boolean))];
-    if (tags.length > 6 || tags.some(tag => tag.length < 2 || tag.length > 24 || !/^[\p{L}\p{N} _-]+$/u.test(tag))) {
+    if (tags.length > 6 || tags.some(tag => tag.length < 2 || tag.length > 24 || !/^[\p{L}\p{N} _-]+$/u.test(tag) || ["owner","admin","moderator","support","staff"].includes(tag.toLowerCase()))) {
       save.disabled = false;
       setText("profile-message", "Use up to 6 tags. Each must be 2–24 letters, numbers, spaces, underscores, or hyphens.");
       return;
