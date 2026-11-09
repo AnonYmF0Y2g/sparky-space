@@ -182,3 +182,14 @@ main { min-height:55vh; }
 .feature-item{padding:12px;border:1px solid var(--border);border-radius:12px;background:var(--surface-raised);margin:10px 0;overflow-wrap:anywhere}
 .feature-item small{color:var(--muted)}
 .pet-preview{font-size:58px;text-align:center;padding:12px}
+
+/* Profile editor organization */
+.profile-media-editor .secondary{background:var(--surface)!important;color:var(--text)!important;border:1px solid var(--border)!important}
+.profile-media-editor button{width:max-content;max-width:100%}
+.profile-media-editor input[type="file"]{width:100%;box-sizing:border-box}
+.feedback-form{display:grid;gap:14px;max-width:680px}
+.feedback-form input,.feedback-form select,.feedback-form textarea{width:100%;box-sizing:border-box;padding:11px 12px;border-radius:10px;background:var(--page);color:var(--text);border:1px solid var(--border);font:inherit}
+.feedback-form button{background:var(--accent-strong);color:#100d18;border:0;border-radius:999px;padding:11px 18px;font:inherit;font-weight:700;cursor:pointer}
+.feedback-form button:disabled{opacity:.6;cursor:wait}
+.rules-accept{display:flex;align-items:flex-start;gap:9px}
+.rules-accept input{width:auto;margin-top:4px;accent-color:var(--accent)}
