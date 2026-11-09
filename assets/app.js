@@ -7,6 +7,7 @@
   const siteKey = window.SPARKY_CONFIG?.turnstileSiteKey || "";
   let activeUser = null;
   let originalProfileMedia = { avatar: "", banner: "" };
+  let profileLoadSequence = 0;
   let authWidget = null;
   let communityWidget = null;
 
@@ -60,10 +61,12 @@
   }
 
   async function loadOwnProfile(user) {
-    if (!user || !byId("profile-form")) return;
+    const request = ++profileLoadSequence;
+    if (!user || !byId("profile-form")) return false;
     const { data, error } = await client.from("profiles")
       .select("username, display_name, bio, status, avatar_url, banner_url, profile_accent, is_public, show_bio, show_status").eq("id", user.id).maybeSingle();
-    if (error) { setText("profile-message", "Couldn't load your profile: " + error.message); return; }
+    if (request !== profileLoadSequence || activeUser?.id !== user.id) return false;
+    if (error) { setText("profile-message", "Couldn't load your profile: " + error.message); return false; }
     if (data) {
       byId("profile-display-name").value = data.display_name || "";
       byId("profile-status").value = data.status || "";
@@ -80,9 +83,14 @@
       if (byId("profile-is-public")) byId("profile-is-public").checked = data.is_public === true;
       if (byId("profile-show-bio")) byId("profile-show-bio").checked = data.show_bio === true;
       if (byId("profile-show-status")) byId("profile-show-status").checked = data.show_status === true;
-      const { data: tags } = await client.from("profile_tags").select("tag").eq("user_id", user.id);
+      const { data: tags, error: tagsError } = await client.from("profile_tags").select("tag").eq("user_id", user.id);
+      if (request !== profileLoadSequence || activeUser?.id !== user.id) return false;
+      if (tagsError) setText("profile-message", "Profile loaded, but tags could not be refreshed: " + tagsError.message);
       if (byId("profile-tags-input")) byId("profile-tags-input").value = (tags || []).map(item => item.tag).join(", ");
-    } else setText("profile-message", "Your profile is still being prepared. Please refresh in a moment.");
+      return true;
+    }
+    setText("profile-message", "Your profile is still being prepared. Try Reload saved details in a moment.");
+    return false;
   }
 
   async function loadMembers() {
@@ -167,6 +175,27 @@
   }
 
   const profileForm = byId("profile-form");
+  if (profileForm && !byId("profile-reload")) {
+    const reload = document.createElement("button");
+    reload.type = "button";
+    reload.id = "profile-reload";
+    reload.className = "secondary";
+    reload.textContent = "Reload saved details";
+    profileForm.insertBefore(reload, byId("profile-save"));
+    reload.addEventListener("click", async () => {
+      if (!activeUser) return;
+      reload.disabled = true;
+      setText("profile-message", "Reloading your saved profile from the server...");
+      try {
+        const loaded = await loadOwnProfile(activeUser);
+        setText("profile-message", loaded
+          ? "Your saved profile details have been reloaded."
+          : "Couldn't reload your profile. Please check your connection and try again.");
+      } finally {
+        reload.disabled = false;
+      }
+    });
+  }
   if (profileForm) profileForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!activeUser) return;
@@ -200,10 +229,15 @@
       show_bio: byId("profile-show-bio").checked,
       show_status: byId("profile-show-status").checked
     };
-    const { error: profileError } = await client.from("profiles").update(values).eq("id", activeUser.id);
-    if (profileError) {
+    const { data: savedProfile, error: profileError } = await client.from("profiles")
+      .update(values).eq("id", activeUser.id)
+      .select("id, display_name, bio, status, avatar_url, banner_url, profile_accent, is_public, show_bio, show_status")
+      .maybeSingle();
+    if (profileError || !savedProfile) {
       save.disabled = false;
-      setText("profile-message", "Couldn't save your profile: " + profileError.message);
+      setText("profile-message", profileError
+        ? "Couldn't save your profile: " + profileError.message
+        : "No profile row was updated. Reload your saved details and try again.");
       return;
     }
     const { error: tagsError } = await client.rpc("replace_my_profile_tags", { p_tags: tags });
@@ -222,8 +256,11 @@
       }
       originalProfileMedia[kind] = current;
     }
+    const reloaded = await loadOwnProfile(activeUser);
     save.disabled = false;
-    setText("profile-message", "Profile and tags saved! ^w^");
+    setText("profile-message", reloaded
+      ? "Profile saved and reloaded from the server! ^w^"
+      : "Your profile was saved, but the editor couldn't reload it. Use Reload saved details.");
     setText("profile-upload-message", "Your profile images are up to date.");
   });
 
@@ -696,7 +733,12 @@
     if (error) say(error.message);
     refreshUserData(data?.session?.user || null, data?.session || null);
   });
-  client.auth.onAuthStateChange((_event, session) => refreshUserData(session?.user || null, session || null));
+  client.auth.onAuthStateChange((_event, session) => {
+    const user = session?.user || null;
+    // Supabase auth callbacks hold an internal lock; defer database reads until it is released.
+    renderUser(user);
+    setTimeout(() => refreshUserData(user, session || null), 0);
+  });
 
   byId("password-reset-button")?.addEventListener("click", async () => {
     if (!activeUser?.email) return;
