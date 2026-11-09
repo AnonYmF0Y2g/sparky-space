@@ -49,14 +49,14 @@
     currentUser = authData?.user || null;
     if (error || !found) return showUnavailable();
     profile = found;
-    renderProfile();
+    await renderProfile();
     $("guestbook-panel").hidden = false;
     await loadGuestbook();
     if (currentUser) $("profile-guestbook-form").hidden = false;
     else $("guestbook-signin-prompt").hidden = false;
   }
 
-  function renderProfile() {
+  async function renderProfile() {
     root.replaceChildren();
     const accents = {pink:"#f18abd",purple:"#c49aff",blue:"#80b8ff",cyan:"#69d5e8",teal:"#69d6c2",green:"#8bd88a",orange:"#f2ad70",red:"#f18c91"};
     root.style.setProperty("--member-accent", accents[profile.profile_accent] || accents.pink);
@@ -71,6 +71,7 @@
       root.append(node("span", "✦ " + roles[profile.staff_role], "profile-role-badge"));
     }
     if (profile.status) root.append(node("p", profile.status, "public-profile-status"));
+
     const about = node("section", undefined, "public-profile-section");
     about.append(node("h3", "About"));
     about.append(node("p", profile.bio || "This member hasn't added a bio yet."));
@@ -78,19 +79,17 @@
 
     const tagsSection = node("section", undefined, "public-profile-section");
     tagsSection.append(node("h3", "Tags and badges"));
+    const [tagResult,badgeResult] = await Promise.all([
+      db.from("profile_tags").select("tag").eq("user_id", profile.id),
+      db.from("profile_badges").select("badges(name,icon,description)").eq("user_id", profile.id)
+    ]);
     const chips = node("div", undefined, "profile-chip-row");
-    const [tagResult,badgeResult] = [null,null];
-    db.from("profile_tags").select("tag").eq("user_id", profile.id).then(({data}) => {
-      for (const item of data || []) chips.append(node("span", item.tag, "profile-tag-chip"));
-      if (chips.childElementCount) tagsSection.append(chips);
-      else if (!tagsSection.querySelector(".section-note")) tagsSection.append(node("p","No tags have been added yet.","section-note"));
-    });
-    db.from("profile_badges").select("badges(name,icon,description)").eq("user_id", profile.id).then(({data}) => {
-      for (const item of data || []) {
-        if (item.badges) chips.append(node("span",(item.badges.icon || "✦") + " " + item.badges.name,"profile-badge-chip"));
-      }
-      if (chips.childElementCount && !chips.parentElement) tagsSection.append(chips);
-    });
+    for (const item of tagResult.data || []) chips.append(node("span", item.tag, "profile-tag-chip"));
+    for (const item of badgeResult.data || []) {
+      if (item.badges) chips.append(node("span", (item.badges.icon || "✦") + " " + item.badges.name, "profile-badge-chip"));
+    }
+    if (chips.childElementCount) tagsSection.append(chips);
+    else tagsSection.append(node("p", "No tags or badges have been added yet.", "section-note"));
     root.append(tagsSection);
     root.append(node("p", profile.created_at ? "Member since " + new Date(profile.created_at).toLocaleDateString() : "", "member-meta"));
     const back = node("a", "← Back to community");
