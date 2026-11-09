@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100d18">
+<title>IT Support Desk · Sparky's Space ♡</title>
+<link rel="stylesheet" href="assets/theme.css">
+</head>
+<body>
+<header class="site-header"><h1>♡ IT Support Desk</h1><p>Friendly help with website, account, privacy, and device questions :3</p></header>
+<nav aria-label="Main navigation">
+<a href="index.html">Home</a><a href="community.html">Community</a><a href="community-hub.html">Community Hub</a><a href="image-board.html">Image Board</a><a href="guides.html">Tech Guides</a><a href="support.html" aria-current="page">IT Support</a><a href="privacy.html">Privacy</a><a href="privacy-tests.html">Privacy Tests</a><a href="feedback.html">Feedback</a><a href="account.html">Account</a>
+</nav>
+<main>
+<section class="card">
+<h2>How support works</h2>
+<p>Open a private support ticket and continue the conversation here. Only you and authorized support staff can read your ticket. The page checks for replies automatically about every 30 seconds while it is open.</p>
+<p class="section-note">This is an asynchronous help desk, not a promise of instant live chat. Replies depend on staff availability. Please do not include passwords, login codes, recovery keys, payment details, home addresses, or other sensitive information. Staff will never need your password.</p>
+<div id="support-signed-out" class="support-state">
+<p>You need to sign in to open and track a private support ticket.</p>
+<a class="support-link" href="account.html">Go to Account / Sign in</a>
+</div>
+<div id="support-signed-in" class="hidden">
+<div class="support-columns">
+<section class="support-pane">
+<div class="topline"><h2>Your tickets</h2><button id="support-refresh" type="button" class="secondary">Refresh</button></div>
+<div id="support-ticket-list"><p class="section-note">Loading your tickets…</p></div>
+</section>
+<section class="support-pane">
+<h2>Open a new ticket</h2>
+<form id="support-new-form" class="feedback-form">
+<label>What do you need help with?
+<select id="support-category" required>
+<option value="general">General question</option>
+<option value="account">Account or sign-in</option>
+<option value="website_bug">Website problem</option>
+<option value="privacy">Privacy or security feature</option>
+<option value="device_help">Device or IT help</option>
+<option value="other">Something else</option>
+</select></label>
+<label>Short subject
+<input id="support-subject" minlength="5" maxlength="120" required placeholder="Example: My profile image will not upload"></label>
+<label>Describe the issue
+<textarea id="support-first-message" minlength="10" maxlength="5000" rows="5" required placeholder="Tell us what happened, what device or browser you use, and what you already tried. Do not include private credentials."></textarea></label>
+<button id="support-create" type="submit">Create support ticket</button>
+</form>
+<p id="support-new-status" class="auth-message" role="status" aria-live="polite"></p>
+</section>
+</div>
+<section class="support-conversation card">
+<div class="topline"><div><h2 id="support-active-title">Select a ticket</h2><p id="support-active-meta" class="section-note">Your conversation will appear here.</p></div></div>
+<div id="support-messages" class="support-messages"><p class="section-note">Choose one of your tickets to view its messages.</p></div>
+<form id="support-reply-form" class="feedback-form hidden">
+<label for="support-reply">Your reply</label>
+<textarea id="support-reply" minlength="1" maxlength="5000" rows="3" required placeholder="Write a reply…"></textarea>
+<button id="support-reply-send" type="submit">Send reply</button>
+</form>
+<p id="support-reply-status" class="auth-message" role="status" aria-live="polite"></p>
+</section>
+</div>
+</section>
+</main>
+<footer>Made with ♡ by Sparky<p>Free to use, community-led, and here to help. ^w^</p></footer>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="assets/support.js"></script>
+<script defer src="assets/theme.js"></script>
+</body>
+</html>
