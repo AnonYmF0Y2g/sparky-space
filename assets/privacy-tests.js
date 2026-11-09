@@ -1,17 +1,29 @@
 (() => {
   "use strict";
   const $ = id => document.getElementById(id);
-  const consent = $("privacy-test-consent");
+  const yes = $("privacy-test-yes");
+  const no = $("privacy-test-no");
   const run = $("run-privacy-tests");
   const dns = $("open-dns-test");
   const status = $("privacy-test-status");
   const results = $("privacy-test-results");
-  consent.addEventListener("change", () => {
-    run.disabled = !consent.checked;
-    dns.disabled = !consent.checked;
-    status.textContent = consent.checked
-      ? "Consent enabled. No checks have run yet."
-      : "Waiting for your choice. Nothing has run.";
+  let consentGiven = false;
+  yes.addEventListener("click", () => {
+    consentGiven = true;
+    run.disabled = false;
+    dns.disabled = false;
+    yes.setAttribute("aria-pressed", "true");
+    no.setAttribute("aria-pressed", "false");
+    status.textContent = "You chose Yes. No checks have run yet; select a test button when ready.";
+  });
+  no.addEventListener("click", () => {
+    consentGiven = false;
+    run.disabled = true;
+    dns.disabled = true;
+    results.replaceChildren();
+    yes.setAttribute("aria-pressed", "false");
+    no.setAttribute("aria-pressed", "true");
+    status.textContent = "You chose No. No tests will run.";
   });
 
   function addResult(title, detail, state="checking") {
@@ -69,7 +81,7 @@
   }
 
   run.addEventListener("click", async () => {
-    if (!consent.checked) return;
+    if (!consentGiven) return;
     run.disabled = true;
     results.replaceChildren();
     status.textContent = "Running the checks you approved...";
@@ -106,7 +118,7 @@
   });
 
   dns.addEventListener("click", () => {
-    if (!consent.checked) return;
+    if (!consentGiven) return;
     window.open("https://www.dnsleaktest.com/", "_blank", "noopener,noreferrer");
   });
 })();
