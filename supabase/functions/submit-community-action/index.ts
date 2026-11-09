@@ -105,9 +105,15 @@ Deno.serve(async (req: Request) => {
     });
 
     if (storagePath) {
-      const { data: storedObject, error: storageError } = await admin.from("objects")
-        .select("name").eq("bucket_id", "community-images").eq("name", storagePath).maybeSingle();
-      if (storageError || !storedObject) return response(400, { success: false, error: "The uploaded image could not be found. Please upload it again." });
+      const fileName = storagePath.slice(userId.length + 1);
+      if (!/^[0-9a-f-]{36}\\.(jpg|png|webp)$/i.test(fileName)) {
+        return response(400, { success: false, error: "The uploaded image path is invalid." });
+      }
+      const { data: storedFiles, error: storageError } = await admin.storage
+        .from("community-images").list(userId, { search: fileName, limit: 100 });
+      if (storageError || !storedFiles?.some(file => file.name === fileName)) {
+        return response(400, { success: false, error: "The uploaded image could not be found. Please upload it again." });
+      }
     }
 
     const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
