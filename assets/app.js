@@ -699,8 +699,29 @@
       for (const tag of visibleTags) tags.append(imageboardNode("span", tag, "tag"));
       op.append(tags);
     }
-    if (post.status === "pending") {
-      op.append(imageboardNode("p", "This thread is awaiting moderator approval and is only visible to you.", "section-note"));
+    if (post.status !== "approved") {
+      const message = post.status === "pending"
+        ? "This thread is awaiting moderator approval and is only visible to you."
+        : "This thread was not published and is only visible to its submitter and staff.";
+      op.append(imageboardNode("p", message, "section-note"));
+      if (post.status === "pending" && user?.id === post.user_id) {
+        const remove = imageboardNode("button", "Delete pending thread");
+        remove.type = "button";
+        remove.addEventListener("click", async () => {
+          if (!window.confirm("Delete this pending thread and its uploaded image?")) return;
+          remove.disabled = true;
+          const { error: deleteError } = await client.from("community_posts").delete().eq("id", post.id);
+          if (deleteError) {
+            messageNode.textContent = "Couldn't delete the thread: " + deleteError.message;
+            remove.disabled = false;
+            return;
+          }
+          await client.storage.from("community-images").remove([post.storage_path]);
+          window.location.href = "image-board.html?board=" + encodeURIComponent(boardSlug);
+        });
+        const messageNode = imageboardNode("p", "", "section-note");
+        op.append(remove, messageNode);
+      }
       root.append(op);
       return;
     }
@@ -734,6 +755,9 @@
         if (reply.status === "pending") {
           card.classList.add("ib-reply-pending");
           card.append(imageboardNode("small", "Awaiting moderator approval · only you and staff can see this for now."));
+        } else if (reply.status !== "approved") {
+          card.classList.add("ib-reply-pending");
+          card.append(imageboardNode("small", "This reply was not published."));
         }
         replyRoot.append(card);
       }
@@ -881,7 +905,9 @@
       subject.href = "image-board.html?board=" + encodeURIComponent(boardSlug) + "&thread=" + encodeURIComponent(post.id);
       const metaText = post.status === "pending"
         ? "Your thread · Awaiting moderation"
-        : "Anonymous · " + new Date(post.bump_at || post.created_at).toLocaleString() + " · " + (replyCounts.get(post.id) || 0) + " replies";
+        : post.status === "approved"
+          ? "Anonymous · " + new Date(post.bump_at || post.created_at).toLocaleString() + " · " + (replyCounts.get(post.id) || 0) + " replies"
+          : "Your thread · Not published";
       const meta = imageboardNode("p", metaText, "ib-post-meta");
       details.append(subject, meta);
       if (post.caption) details.append(imageboardNode("p", post.caption, "ib-thread-excerpt"));
