@@ -106,7 +106,7 @@ Deno.serve(async (req: Request) => {
 
     if (storagePath) {
       const fileName = storagePath.slice(userId.length + 1);
-      if (!/^[0-9a-f-]{36}\\.(jpg|png|webp)$/i.test(fileName)) {
+      if (!/^[0-9a-f-]{36}[.](jpg|png|webp)$/i.test(fileName)) {
         return response(400, { success: false, error: "The uploaded image path is invalid." });
       }
       const { data: storedFiles, error: storageError } = await admin.storage
