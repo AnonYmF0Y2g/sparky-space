@@ -96,12 +96,27 @@
     <p><a href="privacy.html">Open the Privacy Center for the full data and storage overview.</a></p>
     <hr class="soft-rule">
     <h3>♡ Edit your member profile</h3>
-    <form class="profile-editor" id="profile-form">
+    <form class="profile-editor profile-editor-organized" id="profile-form">
       <label>Display name <input id="profile-display-name" maxlength="30" placeholder="How should members see you?"></label>
       <label>Status <input id="profile-status" maxlength="60" placeholder="A short status message"></label>
       <label>Bio <textarea id="profile-bio" maxlength="240" placeholder="A little about you (no private details)"></textarea></label>
-      <label>Avatar image URL <input id="profile-avatar-url" type="url" maxlength="2048" placeholder="https://..."></label>
-      <label>Banner image URL <input id="profile-banner-url" type="url" maxlength="2048" placeholder="https://..."></label>
+      <section class="profile-media-editor" aria-label="Profile images">
+        <h4>Profile pictures</h4>
+        <label>Profile picture <input id="profile-avatar-file" type="file" accept="image/jpeg,image/png,image/webp"></label>
+        <img id="profile-avatar-preview" class="profile-upload-preview avatar-preview" alt="Profile picture preview" hidden>
+        <label>Profile banner <input id="profile-banner-file" type="file" accept="image/jpeg,image/png,image/webp"></label>
+        <img id="profile-banner-preview" class="profile-upload-preview banner-preview" alt="Profile banner preview" hidden>
+        <p class="section-note">Upload JPG, PNG, or WebP images up to 5 MB. Images appear publicly when your profile is public.</p>
+        <input id="profile-avatar-url" type="hidden">
+        <input id="profile-banner-url" type="hidden">
+        <p id="profile-upload-message" class="auth-message" role="status" aria-live="polite"></p>
+      </section>
+      <fieldset class="privacy-options">
+        <legend>Profile tags</legend>
+        <label for="profile-tags-input">Your tags (up to 6, comma-separated)</label>
+        <input id="profile-tags-input" type="text" maxlength="180" placeholder="Furry, Artist, Gamer">
+        <p class="section-note">Keep tags friendly and avoid personal information. Official staff roles are displayed separately and cannot be self-assigned.</p>
+      </fieldset>
       <label>Profile accent <select id="profile-accent"><option value="pink">Pink</option><option value="purple">Purple</option><option value="blue">Blue</option><option value="cyan">Cyan</option><option value="teal">Teal</option><option value="green">Green</option><option value="orange">Orange</option><option value="red">Red</option></select></label>
       <fieldset class="privacy-options"><legend>Profile privacy</legend>
         <label><input id="profile-is-public" type="checkbox"> Show my profile in the public directory</label>
@@ -123,6 +138,7 @@
 <script defer src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
 <script defer src="assets/config.js"></script>
 <script defer src="assets/app.js"></script>
+<script defer src="assets/profile-ui.js"></script>
 <script defer src="assets/theme.js"></script>
 </body>
 </html>
