@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d16">
+<title>Sparky's TV Hub</title>
+<style>
+:root{color-scheme:dark;--bg:#090b13;--panel:#151927;--panel2:#1c2233;--line:#303950;--text:#f4f2fb;--muted:#a9b0c5;--accent:#ff8fc8;--accent2:#b99aff}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--bg)}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 80% 0%,#28203d 0%,transparent 42%),radial-gradient(ellipse at 0% 100%,#18283a 0%,transparent 42%),var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+button,a,textarea{font:inherit}
+.shell{width:min(1500px,100%);margin:auto;padding:clamp(22px,4vw,58px)}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:34px}
+.eyebrow{color:var(--accent);font-size:clamp(14px,1.4vw,19px);letter-spacing:.16em;text-transform:uppercase;font-weight:bold}
+h1{font-size:clamp(36px,5vw,68px);line-height:1.05;margin:10px 0}
+.subtitle{color:var(--muted);font-size:clamp(16px,1.7vw,22px);margin:0}
+.clock{text-align:right;white-space:nowrap}
+#time{font-size:clamp(34px,5vw,64px);font-weight:700;font-variant-numeric:tabular-nums}
+#date{font-size:clamp(14px,1.5vw,19px);color:var(--muted);margin-top:5px}
+.grid{display:grid;grid-template-columns:1.35fr 1fr;gap:22px}
+.panel{background:linear-gradient(145deg,rgba(29,35,53,.96),rgba(17,21,33,.96));border:1px solid var(--line);border-radius:22px;padding:clamp(20px,2.5vw,32px);box-shadow:0 18px 55px #0005}
+.panel h2{font-size:clamp(20px,2vw,27px);margin:0 0 18px}
+.launchers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.tile{min-height:104px;display:flex;flex-direction:column;justify-content:center;gap:7px;padding:20px;text-decoration:none;color:var(--text);background:var(--panel2);border:2px solid transparent;border-radius:16px;transition:background .15s,border-color .15s,transform .15s}
+.tile strong{font-size:clamp(18px,1.8vw,24px)}
+.tile span{font-size:clamp(13px,1.3vw,16px);color:var(--muted)}
+.tile:focus,.tile:hover,button:focus,button:hover,textarea:focus{outline:none;border-color:var(--accent);background:#2b2940;transform:translateY(-2px)}
+.tile:focus-visible,button:focus-visible,textarea:focus-visible{box-shadow:0 0 0 4px #ff8fc866}
+.side{display:grid;gap:22px;align-content:start}
+.statusline{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:16px}
+.dot{width:10px;height:10px;border-radius:50%;background:#8dd9b4;box-shadow:0 0 14px #8dd9b477}
+.note{width:100%;min-height:112px;resize:vertical;background:#0e1320;color:var(--text);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:17px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{background:#29233a;color:var(--text);border:2px solid var(--line);border-radius:12px;padding:12px 17px;cursor:pointer}
+.small{font-size:14px;color:var(--muted);line-height:1.55}
+footer{padding:28px 4px 8px;color:var(--muted);font-size:14px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.ambient{position:fixed;inset:0;z-index:5;background:#070910;display:none;align-items:center;justify-content:center;text-align:center}
+.ambient.show{display:flex}
+.ambient #bigtime{font-size:clamp(70px,15vw,190px);font-weight:700;letter-spacing:-.04em}
+.ambient #bigdate{font-size:clamp(20px,3vw,36px);color:var(--muted);margin-top:12px}
+.ambient button{position:absolute;bottom:5vh}
+@media(max-width:850px){.grid{grid-template-columns:1fr}header{flex-direction:column}.clock{text-align:left}.side{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.side{grid-template-columns:1fr}.launchers{grid-template-columns:1fr 1fr}.tile{min-height:90px;padding:14px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header>
+  <div><div class="eyebrow">♡ SPARKY'S SPACE PRESENTS</div><h1>TV Hub</h1><p class="subtitle">Your little corner of the big screen. :3</p></div>
+  <div class="clock"><div id="time">--:--</div><div id="date">Loading date…</div></div>
+</header>
+<main class="grid">
+  <section class="panel">
+    <h2>Quick launch</h2>
+    <div class="launchers">
+      <a class="tile" href="https://www.youtube.com/"><strong>YouTube</strong><span>Videos and creators</span></a>
+      <a class="tile" href="https://www.netflix.com/"><strong>Netflix</strong><span>Movies and shows</span></a>
+      <a class="tile" href="https://open.spotify.com/"><strong>Spotify</strong><span>Music and podcasts</span></a>
+      <a class="tile" href="https://anonymf0y2g.github.io/sparky-space/"><strong>Sparky's Space</strong><span>Back to the home site</span></a>
+      <a class="tile" href="https://www.lg.com/"><strong>LG</strong><span>TV help and support</span></a>
+      <a class="tile" href="https://www.wikipedia.org/"><strong>Explore</strong><span>Look something up</span></a>
+    </div>
+    <p class="small">These open in the TV's web browser. Some services may work better in their built-in webOS apps.</p>
+  </section>
+  <div class="side">
+    <section class="panel">
+      <h2>TV corner</h2>
+      <div class="statusline"><span class="dot"></span><span>Dashboard loaded successfully</span></div>
+      <p class="small">This page is a lightweight web dashboard. It does not change webOS, install apps, or access your TV's private system information.</p>
+      <div class="actions"><button id="ambientBtn" type="button">Big clock mode</button><button id="formatBtn" type="button">Switch to 12/24h</button></div>
+    </section>
+    <section class="panel">
+      <h2>Little notepad</h2>
+      <textarea class="note" id="note" maxlength="500" placeholder="Write a reminder for this TV browser…"></textarea>
+      <div class="actions"><button id="saveBtn" type="button">Save note</button><button id="clearBtn" type="button">Clear</button></div>
+      <p class="small" id="saveState" aria-live="polite">Notes stay in this browser if local storage is supported. Don't put passwords or private information here.</p>
+    </section>
+    <section class="panel">
+      <h2>Using a USB drive</h2>
+      <p class="small">For movies, photos, and music, plug the USB drive into the TV and open its Photos &amp; Videos or Media Player app. This dashboard cannot browse USB files directly; use the TV's own media app for that.</p>
+    </section>
+  </div>
+</main>
+<footer><span>Made with ♡ by Sparky</span><span>Designed for a TV screen · Remote-friendly · No account needed</span></footer>
+</div>
+<div class="ambient" id="ambient" aria-hidden="true"><div><div id="bigtime">--:--</div><div id="bigdate"></div></div><button id="exitAmbient" type="button">Back to dashboard</button></div>
+<script>
+(function(){
+ var use24=true;
+ var time=document.getElementById('time'),date=document.getElementById('date'),bigtime=document.getElementById('bigtime'),bigdate=document.getElementById('bigdate');
+ function tick(){
+  var d=new Date(),opts={hour:'2-digit',minute:'2-digit',hour12:!use24};
+  var t=d.toLocaleTimeString([],opts),ds=d.toLocaleDateString([], {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  time.textContent=t;date.textContent=ds;bigtime.textContent=t;bigdate.textContent=ds;
+ }
+ tick();setInterval(tick,1000);
+ document.getElementById('formatBtn').addEventListener('click',function(){use24=!use24;this.textContent=use24?'Switch to 12/24h':'Switch to 24/12h';tick();});
+ var ambient=document.getElementById('ambient');
+ document.getElementById('ambientBtn').addEventListener('click',function(){ambient.className='ambient show';ambient.setAttribute('aria-hidden','false');document.getElementById('exitAmbient').focus();});
+ document.getElementById('exitAmbient').addEventListener('click',function(){ambient.className='ambient';ambient.setAttribute('aria-hidden','true');document.getElementById('ambientBtn').focus();});
+ var note=document.getElementById('note'),state=document.getElementById('saveState');
+ try{note.value=localStorage.getItem('sparkys-tv-note')||'';}catch(e){}
+ document.getElementById('saveBtn').addEventListener('click',function(){try{localStorage.setItem('sparkys-tv-note',note.value);state.textContent='Saved in this browser. :3';}catch(e){state.textContent='This browser did not allow local saving. You can still use the notepad while this page is open.';}});
+ document.getElementById('clearBtn').addEventListener('click',function(){note.value='';try{localStorage.removeItem('sparkys-tv-note');state.textContent='Note cleared.';}catch(e){state.textContent='Text cleared from the box.';}});
+})();
+</script>
+</body>
+</html>
